@@ -20,5 +20,8 @@
     "typescript": "latest",
     "sweph": "^2.10.3-5"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "engines": {
+    "node": "20.x"
+  }
 }
