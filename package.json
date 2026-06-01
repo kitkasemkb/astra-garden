@@ -17,8 +17,7 @@
     "openai": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "typescript": "latest",
-    "sweph": "^2.10.3-5"
+    "typescript": "latest"
   },
   "devDependencies": {},
   "engines": {

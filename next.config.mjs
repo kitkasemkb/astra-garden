@@ -1,6 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  serverExternalPackages: ["sweph"],
-};
+const nextConfig = {};
 
 export default nextConfig;
