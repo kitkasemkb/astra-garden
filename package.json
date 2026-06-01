@@ -1,0 +1,24 @@
+{
+  "name": "ai-astrology-advisor-full-v7-astral-garden-ux",
+  "version": "0.7.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "next": "latest",
+    "openai": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "sweph": "^2.10.3-5"
+  },
+  "devDependencies": {}
+}
