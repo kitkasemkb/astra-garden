@@ -19,8 +19,5 @@
     "react-dom": "latest",
     "typescript": "latest"
   },
-  "devDependencies": {},
-  "engines": {
-    "node": "20.x"
-  }
+  "devDependencies": {}
 }
