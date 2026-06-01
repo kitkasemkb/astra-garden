@@ -199,7 +199,7 @@ const PLANET_ELEMENTS: Record<string, number[]> = {
   Neptune: [304.348665,    218.4862002, 30.110386869, 0.00898809,  0.000006408, 1.769952,  0.0002257, 131.784057, -0.0061651, 48.123691, 0.0288429],
 };
 
-function planetLongitude(name: keyof typeof PLANET_ELEMENTS, t: number): number {
+function planetLongitude(name: keyof typeof PLANET_ELEMENTS, t: number): { lon: number; r: number } {
   const [L0, L1, a, e0, e1, , , , , ω0, ω1] = PLANET_ELEMENTS[name];
   const L = norm(L0 + L1 * t);
   const e = e0 + e1 * t;
@@ -362,7 +362,7 @@ export async function calculateChart(input: BirthInput): Promise<Chart> {
     else if (name === "Moon") lon = moonLon;
     else if (name === "Pluto") lon = plutoLongitude(t);
     else {
-      const { lon: pLon, r: pR } = planetLongitude(name, t) as any;
+      const { lon: pLon, r: pR } = planetLongitude(name, t);
       lon = toGeocentric(pLon, pR, earth.lon, earth.r);
     }
     const s = signOf(lon);
