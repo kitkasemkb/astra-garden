@@ -44,7 +44,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ chart, answer: response.output_text });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "ระบบวิเคราะห์ไม่สำเร็จ กรุณาตรวจข้อมูลหรือ API key แล้วลองใหม่" }, { status: 500 });
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("[advisor error]", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
