@@ -11,6 +11,13 @@ export async function POST(req: NextRequest) {
 
   const prompt = `คุณคือหมอดูโหราศาสตร์ไทยผู้มีพลังสูง ทำนายดวงประจำวันสำหรับราศี${signTh} (${sign}) วันที่ ${date}
 
+🔴 กฎภาษาที่ต้องปฏิบัติอย่างเคร่งครัด:
+- ตอบเป็นภาษาไทยมาตรฐานที่ถูกต้องสมบูรณ์ 100% ทุกประโยค
+- ห้ามใช้ภาษาอังกฤษ ยกเว้นชื่อดาวเคราะห์ที่จำเป็น เช่น Jupiter, Venus
+- ห้ามใช้คำภาษาไทยที่สะกดผิด หรือภาษาวิบัติ
+- ใช้ภาษาไทยที่อ่านง่าย เป็นธรรมชาติ สละสลวย
+- แต่ละประโยคต้องสมบูรณ์ ไม่ขาดหาย
+
 ทำนายอย่างเป็นรูปธรรม ระบุสิ่งที่จะเกิดขึ้นจริงๆ ไม่ใช่แค่คำแนะนำทั่วไป
 ใส่พลังงานลึกลับและเสน่ห์ของโหราศาสตร์
 ห้ามพูดว่า "ขึ้นอยู่กับตัวคุณ" — หมอดูทำนายอย่างมั่นใจ
@@ -45,7 +52,7 @@ export async function POST(req: NextRequest) {
         const response = await client.responses.create({
           model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
           input: prompt,
-          max_output_tokens: 800,
+          max_output_tokens: 900,
           stream: true,
         });
         for await (const event of response) {
