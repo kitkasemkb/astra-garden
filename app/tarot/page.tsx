@@ -101,6 +101,7 @@ export default function TarotPage() {
     const pos = CELTIC_CROSS_POSITIONS[index];
     const isRevealed = revealedCards.has(index);
     const isSelected = selectedCard === index;
+    const imgSrc = `/tarot/${card.id}.jpg`;
 
     return (
       <div
@@ -109,14 +110,28 @@ export default function TarotPage() {
         title={pos.nameTh}
       >
         <div className="tarot-card-inner">
+          {/* Back */}
           <div className="tarot-card-back">
-            <span>✦</span>
+            <div className="tarot-back-pattern">
+              <div className="tarot-back-inner">✦</div>
+            </div>
           </div>
+          {/* Front with real image */}
           <div className={`tarot-card-front ${card.isReversed ? "reversed" : ""}`}>
-            <div className="card-symbol">{card.symbol}</div>
-            <div className="card-name-th">{card.nameTh}</div>
-            <div className="card-pos-label">{pos.nameTh}</div>
-            {card.isReversed && <div className="reversed-badge">กลับหัว</div>}
+            <div className="card-img-wrapper">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imgSrc}
+                alt={card.name}
+                className="card-img"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
+              />
+              <div className="card-img-overlay" />
+            </div>
+            <div className="card-label-bar">
+              <span className="card-name-th">{card.nameTh}</span>
+              {card.isReversed && <span className="reversed-dot" title="กลับหัว">↓</span>}
+            </div>
           </div>
         </div>
       </div>
@@ -252,24 +267,38 @@ export default function TarotPage() {
             {/* Selected card detail */}
             {selectedCard !== null && spread.cards[selectedCard] && (
               <div className="card-detail-popup">
-                <div className="card-detail-header">
-                  <span className="card-detail-symbol">{spread.cards[selectedCard].symbol}</span>
-                  <div>
-                    <h3>{spread.cards[selectedCard].nameTh}</h3>
-                    <p>{spread.cards[selectedCard].name} · {spread.cards[selectedCard].isReversed ? "กลับหัว" : "ตรง"}</p>
-                    <small>ตำแหน่ง: {CELTIC_CROSS_POSITIONS[selectedCard].nameTh}</small>
+                <button className="card-detail-close" onClick={() => setSelectedCard(null)}>✕</button>
+                <div className="card-detail-layout">
+                  <div className="card-detail-image-wrap">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/tarot/${spread.cards[selectedCard].id}.jpg`}
+                      alt={spread.cards[selectedCard].name}
+                      className={`card-detail-img ${spread.cards[selectedCard].isReversed ? "reversed" : ""}`}
+                    />
+                    <div className="card-detail-orientation">
+                      {spread.cards[selectedCard].isReversed ? "↓ กลับหัว" : "↑ ตรง"}
+                    </div>
                   </div>
-                  <button className="card-detail-close" onClick={() => setSelectedCard(null)}>✕</button>
+                  <div className="card-detail-info">
+                    <div className="card-detail-pos">{CELTIC_CROSS_POSITIONS[selectedCard].nameTh}</div>
+                    <h3>{spread.cards[selectedCard].nameTh}</h3>
+                    <p className="card-detail-name-en">{spread.cards[selectedCard].name}</p>
+                    <div className="card-detail-astro">
+                      <span>🔭 {spread.cards[selectedCard].astro}</span>
+                    </div>
+                    <div className="card-detail-keywords">
+                      {spread.cards[selectedCard].keywordsTh.map(k => (
+                        <span key={k} className="keyword-tag">{k}</span>
+                      ))}
+                    </div>
+                    <p className="card-detail-meaning">
+                      {spread.cards[selectedCard].isReversed
+                        ? spread.cards[selectedCard].reversed
+                        : spread.cards[selectedCard].upright}
+                    </p>
+                  </div>
                 </div>
-                <div className="card-detail-astro">
-                  <span>🔭 {spread.cards[selectedCard].astro}</span>
-                  <span>· {spread.cards[selectedCard].keywordsTh.slice(0, 3).join(" · ")}</span>
-                </div>
-                <p className="card-detail-meaning">
-                  {spread.cards[selectedCard].isReversed
-                    ? spread.cards[selectedCard].reversed
-                    : spread.cards[selectedCard].upright}
-                </p>
               </div>
             )}
           </div>

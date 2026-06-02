@@ -678,67 +678,120 @@ body::before {
 .cross-staff { display: grid; grid-template-rows: repeat(4,1fr); gap: 8px }
 .staff-pos { display: flex; align-items: center; justify-content: center }
 
-/* Tarot Card */
+/* ── Tarot Card with real image ──────────────────────────────────── */
 .tarot-card-slot {
-  width: 80px; height: 120px; cursor: pointer;
-  perspective: 600px; flex-shrink: 0;
+  width: 86px; height: 148px; cursor: pointer;
+  perspective: 800px; flex-shrink: 0;
 }
 .tarot-card-inner {
   width: 100%; height: 100%;
-  transition: transform .6s cubic-bezier(.4,0,.2,1);
+  transition: transform .7s cubic-bezier(.4,0,.2,1);
   transform-style: preserve-3d; position: relative;
 }
 .tarot-card-slot.revealed .tarot-card-inner { transform: rotateY(180deg) }
-.tarot-card-slot.selected .tarot-card-inner { transform: rotateY(180deg) scale(1.08) }
-.tarot-card-back, .tarot-card-front {
-  position: absolute; inset: 0; backface-visibility: hidden;
-  border-radius: 10px; border: 1px solid var(--line);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
+.tarot-card-slot.selected .tarot-card-inner { transform: rotateY(180deg) scale(1.1) }
+
+/* Card back — ornate pattern */
 .tarot-card-back {
-  background: linear-gradient(135deg, var(--space-2), var(--nebula));
-  font-family: var(--serif); font-size: 28px; color: var(--aurora-2);
-  box-shadow: 0 8px 24px rgba(5,8,15,.4);
+  position: absolute; inset: 0; backface-visibility: hidden;
+  border-radius: 11px; overflow: hidden;
+  background: linear-gradient(145deg, #1a0a35, #0d0a28);
+  border: 2px solid rgba(167,139,250,.4);
+  box-shadow: 0 8px 28px rgba(5,8,15,.6), inset 0 0 20px rgba(167,139,250,.05);
 }
-.tarot-card-front {
-  background: linear-gradient(160deg, var(--glass-2), rgba(20,28,56,.9));
-  transform: rotateY(180deg); padding: 6px; gap: 4px;
-  box-shadow: 0 8px 24px rgba(5,8,15,.4);
+.tarot-back-pattern {
+  position: absolute; inset: 3px; border-radius: 9px;
+  border: 1px solid rgba(167,139,250,.25);
+  background:
+    repeating-linear-gradient(45deg, rgba(167,139,250,.04) 0, rgba(167,139,250,.04) 1px, transparent 1px, transparent 8px),
+    repeating-linear-gradient(-45deg, rgba(79,200,255,.04) 0, rgba(79,200,255,.04) 1px, transparent 1px, transparent 8px);
+  display: grid; place-items: center;
 }
-.tarot-card-front.reversed { transform: rotateY(180deg) rotate(180deg) }
-.card-symbol { font-size: 22px; line-height: 1 }
-.card-name-th { font-size: 8px; font-weight: 500; color: var(--star); text-align: center; line-height: 1.3 }
-.card-pos-label { font-size: 7px; color: var(--aurora); text-align: center; line-height: 1.3 }
-.reversed-badge {
-  font-size: 7px; background: rgba(167,139,250,.2); color: var(--aurora-2);
-  border: 1px solid rgba(167,139,250,.3); border-radius: 4px; padding: 1px 4px;
+.tarot-back-inner {
+  font-family: var(--serif); font-size: 26px; color: rgba(167,139,250,.7);
+  text-shadow: 0 0 20px rgba(167,139,250,.5);
 }
 
-/* Card detail popup */
+/* Card front — real image */
+.tarot-card-front {
+  position: absolute; inset: 0; backface-visibility: hidden;
+  transform: rotateY(180deg);
+  border-radius: 11px; overflow: hidden;
+  border: 2px solid rgba(201,160,80,.35);
+  box-shadow: 0 10px 30px rgba(5,8,15,.6);
+  display: flex; flex-direction: column;
+  background: #f5e8c0;
+}
+.tarot-card-front.reversed { transform: rotateY(180deg) rotate(180deg) }
+.card-img-wrapper {
+  flex: 1; position: relative; overflow: hidden;
+}
+.card-img {
+  width: 100%; height: 100%; object-fit: cover; object-position: top;
+  display: block;
+}
+.card-img-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(10,8,20,.85));
+}
+.card-label-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 3px 5px; display: flex; justify-content: space-between; align-items: center;
+  background: rgba(10,8,20,.88); border-top: 1px solid rgba(201,160,80,.3);
+}
+.card-name-th {
+  font-size: 7.5px; font-weight: 500; color: #f0deb0;
+  text-align: center; line-height: 1.2; flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.reversed-dot {
+  font-size: 9px; color: var(--aurora-2); flex-shrink: 0; margin-left: 2px;
+}
+
+/* ── Card detail popup — large image ───────────────────────────────── */
 .card-detail-popup {
-  margin-top: 16px; background: var(--glass-2);
-  border: 1px solid var(--line-2); border-radius: 18px; padding: 18px;
+  position: relative; margin-top: 16px;
+  background: var(--glass-2); border: 1px solid var(--line-2);
+  border-radius: 20px; padding: 18px;
 }
-.card-detail-header {
-  display: flex; align-items: flex-start; gap: 14px; margin-bottom: 10px;
-}
-.card-detail-symbol { font-size: 36px; line-height: 1 }
-.card-detail-header h3 {
-  font-family: var(--serif); font-size: 22px; font-weight: 300;
-  color: var(--star); margin: 0 0 4px; letter-spacing: -.03em;
-}
-.card-detail-header p { font-size: 12px; color: var(--aurora); margin: 0 }
-.card-detail-header small { font-size: 11px; color: var(--star-dim) }
 .card-detail-close {
-  margin-left: auto; background: transparent; color: var(--star-dim);
-  font-size: 14px; padding: 4px 8px; border-radius: 8px;
-  border: 1px solid rgba(255,255,255,.08);
+  position: absolute; top: 14px; right: 14px;
+  background: rgba(255,255,255,.06); color: var(--star-dim);
+  font-size: 13px; padding: 4px 9px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.08); z-index: 2;
 }
-.card-detail-astro {
-  font-size: 12px; color: var(--aurora-3); margin-bottom: 10px;
-  display: flex; gap: 8px; flex-wrap: wrap;
+.card-detail-layout { display: grid; grid-template-columns: 130px 1fr; gap: 18px; align-items: start }
+.card-detail-image-wrap { position: relative }
+.card-detail-img {
+  width: 130px; border-radius: 12px;
+  border: 2px solid rgba(201,160,80,.4);
+  box-shadow: 0 16px 48px rgba(5,8,15,.6), 0 0 0 1px rgba(201,160,80,.1);
+  display: block;
 }
-.card-detail-meaning { font-size: 14px; color: var(--star-mid); line-height: 1.8; margin: 0 }
+.card-detail-img.reversed { transform: rotate(180deg) }
+.card-detail-orientation {
+  text-align: center; margin-top: 6px;
+  font-size: 10px; color: var(--star-dim); letter-spacing: .08em;
+}
+.card-detail-pos {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .18em;
+  color: var(--aurora); margin-bottom: 6px;
+}
+.card-detail-info h3 {
+  font-family: var(--serif); font-size: 20px; font-weight: 300;
+  color: var(--star); margin: 0 0 3px; letter-spacing: -.03em;
+}
+.card-detail-name-en { font-size: 11px; color: var(--star-dim); margin: 0 0 8px }
+.card-detail-astro { font-size: 11px; color: var(--aurora-3); margin-bottom: 8px }
+.card-detail-keywords {
+  display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px;
+}
+.keyword-tag {
+  font-size: 10px; padding: 2px 8px; border-radius: 999px;
+  background: rgba(79,200,255,.1); color: var(--aurora);
+  border: 1px solid rgba(79,200,255,.2);
+}
+.card-detail-meaning { font-size: 13px; color: var(--star-mid); line-height: 1.75; margin: 0 }
 
 /* Tarot Interpretation */
 .tarot-interpretation {
