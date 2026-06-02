@@ -205,7 +205,7 @@ const MONTHS_TH = [
 ];
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
-const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5); // ทุก 5 นาที
+const MINUTES = Array.from({ length: 60 }, (_, i) => i); // ทุก 1 นาที
 
 export default function HomePage() {
   const [step, setStep] = useState<WizardStep>(0);
