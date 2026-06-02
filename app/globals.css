@@ -587,10 +587,27 @@ body::before {
   color: var(--aurora-2); font-size: 11px; text-decoration: none;
   border: 1px solid rgba(184,157,252,.3); border-radius: 999px;
   padding: 5px 12px; letter-spacing: .1em;
-  background: rgba(184,157,252,.08);
-  transition: .2s;
+  background: rgba(184,157,252,.08); transition: .2s;
 }
 .topbar-tarot-btn:hover { background: rgba(184,157,252,.18); border-color: var(--aurora-2) }
+
+/* ปุ่มทาโร่บนมือถือ (topbar) */
+.topbar-tarot-mobile {
+  display: none; text-decoration: none;
+  font-size: 20px; padding: 4px 8px; border-radius: 10px;
+  background: rgba(184,157,252,.12); border: 1px solid rgba(184,157,252,.25);
+}
+
+/* ปุ่มทาโร่ใน landing */
+.landing-tarot-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  text-decoration: none; color: var(--aurora-2);
+  border: 1px solid rgba(184,157,252,.3); border-radius: 999px;
+  padding: 12px 22px; font-size: 14px; font-weight: 400;
+  background: rgba(184,157,252,.08); transition: .2s;
+}
+.landing-tarot-btn:hover { background: rgba(184,157,252,.18); border-color: var(--aurora-2) }
+.landing-action-hint { font-size: 12px; color: var(--star-dim); margin: 10px 0 0; line-height: 1.6 }
 
 /* ── Tarot Hero ───────────────────────────────────────────────────── */
 .tarot-hero {
@@ -964,6 +981,7 @@ body::before {
   .brand-sigil { width: 30px; height: 30px; font-size: 13px }
   .brand-lockup strong { font-size: 10px }
   .topbar-meta { display: none }
+  .topbar-tarot-mobile { display: flex; align-items: center }
 
   .landing-scene { display: block; min-height: auto; margin-top: 6px }
   .landing-copy { padding: 18px 0 6px }

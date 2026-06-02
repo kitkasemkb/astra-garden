@@ -345,7 +345,7 @@ export default function HomePage() {
   }
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // ไม่ auto-scroll — ให้ user เลื่อนเอง
   }, [chatMessages, chatLoading]);
 
   useEffect(() => {
@@ -415,6 +415,8 @@ export default function HomePage() {
           <span>Personal reading</span>
           <a href="/tarot" className="topbar-tarot-btn">🔮 ไพ่ทาโร่</a>
         </div>
+        {/* แสดงเฉพาะมือถือ */}
+        <a href="/tarot" className="topbar-tarot-mobile">🔮</a>
       </header>
 
       {step === 0 && (
@@ -429,8 +431,11 @@ export default function HomePage() {
               <button className="luxury-button" onClick={() => setStep(1)}>
                 เริ่มอ่านจังหวะชีวิต
               </button>
-              <span>อ่านแบบผ่อนคลาย ใช้เป็นมุมมองประกอบ ไม่ใช่คำตัดสินแทนคุณ</span>
+              <a href="/tarot" className="landing-tarot-btn">
+                🔮 ดูไพ่ทาโร่
+              </a>
             </div>
+            <p className="landing-action-hint">อ่านแบบผ่อนคลาย ใช้เป็นมุมมองประกอบ ไม่ใช่คำตัดสินแทนคุณ</p>
           </div>
 
           <div className="hero-art" aria-hidden="true">

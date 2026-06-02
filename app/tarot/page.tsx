@@ -22,7 +22,7 @@ export default function TarotPage() {
   const interpretRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isStreaming) interpretRef.current?.scrollIntoView({ behavior: "smooth" });
+    // ไม่ auto-scroll — ให้ user เลื่อนเอง
   }, [interpretation, isStreaming]);
 
   async function startReading() {
