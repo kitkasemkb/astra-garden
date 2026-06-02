@@ -818,7 +818,7 @@ body::before {
 
 /* ── Tarot center banner ────────────────────────────────────────────── */
 .tarot-center-banner {
-  max-width: 1440px; margin: -16px auto 40px;
+  max-width: 1440px; margin: 24px auto 40px;
   background: linear-gradient(135deg, rgba(20,16,56,.9), rgba(10,12,28,.85));
   border: 1px solid var(--line-2); border-radius: 28px;
   padding: clamp(24px,4vw,48px); display: grid;

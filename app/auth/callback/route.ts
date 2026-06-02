@@ -14,11 +14,21 @@ export async function GET(req: NextRequest) {
       {
         cookies: {
           getAll: () => cookieStore.getAll(),
-          setAll: (toSet) => toSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)),
+          setAll: (toSet) => toSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options)
+          ),
         },
       }
     );
-    await supabase.auth.exchangeCodeForSession(code);
+
+    const { data } = await supabase.auth.exchangeCodeForSession(code);
+
+    // ถ้า login ผ่าน Google และยังไม่มีข้อมูลเกิด → ไปกรอกก่อน
+    const meta = data.session?.user?.user_metadata;
+    if (data.session && !meta?.birth_year_be) {
+      return NextResponse.redirect(`${origin}/auth/birth`);
+    }
   }
+
   return NextResponse.redirect(`${origin}/`);
 }
