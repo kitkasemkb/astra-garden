@@ -299,31 +299,47 @@ export default function HomePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          topic,
-          situation,
-          options,
-          concern,
-          goal,
-          birthDate,
-          birthTime,
-          timezoneOffset,
-          latitude,
-          longitude,
-          category,
-          advisorTone,
-          selectedProvince,
+          topic, situation, options, concern, goal,
+          birthDate, birthTime, timezoneOffset, latitude, longitude,
+          category, advisorTone, selectedProvince,
         }),
       });
-      const data = await res.json();
-      if (!res.ok) {
+
+      if (!res.ok || !res.body) {
+        const data = await res.json();
         setAnswer(data.error || "เกิดข้อผิดพลาด");
         return;
       }
-      setChart(data.chart);
-      setAnswer(data.answer);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const data = JSON.parse(line.slice(6));
+          if (data.type === "chart") {
+            setChart(data.chart);
+            setLoading(false);
+          } else if (data.type === "delta") {
+            setAnswer(prev => prev + data.text);
+          } else if (data.type === "done") {
+            setLoading(false);
+          } else if (data.type === "error") {
+            setAnswer(data.message);
+            setLoading(false);
+          }
+        }
+      }
     } catch {
       setAnswer("เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
-    } finally {
       setLoading(false);
     }
   }
@@ -397,7 +413,7 @@ export default function HomePage() {
         </button>
         <div className="topbar-meta">
           <span>Personal reading</span>
-          <span>Thai · Swiss Ephemeris ready</span>
+          <a href="/tarot" className="topbar-tarot-btn">🔮 ไพ่ทาโร่</a>
         </div>
       </header>
 
