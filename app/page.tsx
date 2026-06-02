@@ -810,6 +810,13 @@ export default function HomePage() {
                         อ่านเป็นมุมมองประกอบการไตร่ตรอง
                         และใช้ข้อมูลจริงในชีวิตร่วมตัดสินใจเสมอ
                       </p>
+                      <a
+                        href={`/share?topic=${encodeURIComponent(topic)}&category=${encodeURIComponent(currentCategory.label)}&asc=${encodeURIComponent(chart ? `${chart.ascendant.sign} ${chart.ascendant.degreeInSign}°` : "")}&mc=${encodeURIComponent(chart ? `${chart.midheaven.sign} ${chart.midheaven.degreeInSign}°` : "")}&preview=${encodeURIComponent(sections[0]?.body?.slice(0,120) || "")}`}
+                        target="_blank"
+                        className="share-btn"
+                      >
+                        🔗 แชร์ผลทำนาย
+                      </a>
                     </div>
                     <div className="report-masonry">
                       {sections.map((section, index) => (

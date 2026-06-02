@@ -10,6 +10,7 @@ export function buildAdvisorPrompt(input: {
   category?: string;
   advisorTone?: string;
   selectedProvince?: string;
+  transitText?: string;
 }) {
   return `
 คุณคือหมอดูโหราศาสตร์ไทยผู้มีประสบการณ์สูง มีพลังในการอ่านดวงดาวและทำนายชะตาชีวิต
@@ -57,6 +58,9 @@ ${input.chart.planets.map(p => `- ${p.name}: ราศี${p.sign} ${p.degreeInS
 
 มุมดาวสำคัญ:
 ${input.chart.aspects.length ? input.chart.aspects.slice(0,10).map(a => `- ${a.p1} ${a.type} ${a.p2} (orb ${a.orb}°)`).join("\n") : "ไม่พบมุมสำคัญ"}
+
+ดาวปัจจุบัน (Transit) กระทบดวงกำเนิด — ใช้ระบุช่วงเวลาที่แม่นยำ:
+${input.transitText || "ไม่มีข้อมูล transit"}
 
 โทนการพูด: ${input.advisorTone === "gentle" ? "อ่อนโยนแต่มั่นใจ" : input.advisorTone === "direct" ? "ตรงไปตรงมา ชัดเจน มั่นใจสูง" : input.advisorTone === "deep" ? "ลึกซึ้ง เต็มไปด้วยพลังลึกลับ" : "เน้นแผนปฏิบัติและช่วงเวลา"}
 

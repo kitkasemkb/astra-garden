@@ -760,6 +760,76 @@ body::before {
   display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;
 }
 
+/* ── Share button ────────────────────────────────────────────────── */
+.share-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 12px; padding: 8px 16px; border-radius: 999px;
+  background: rgba(79,200,255,.1); color: var(--aurora);
+  border: 1px solid rgba(79,200,255,.25); font-size: 13px;
+  text-decoration: none; transition: .2s;
+}
+.share-btn:hover { background: rgba(79,200,255,.2); border-color: var(--aurora) }
+
+/* ── Share card page ─────────────────────────────────────────────── */
+.share-card-wrapper { display: flex; flex-direction: column; align-items: center; gap: 24px }
+.share-card {
+  position: relative; width: min(460px, 90vw);
+  background: linear-gradient(145deg, var(--space-2), var(--nebula));
+  border: 1px solid var(--line-2); border-radius: 28px;
+  padding: 32px; overflow: hidden;
+  box-shadow: 0 40px 100px rgba(5,8,15,.7), 0 0 0 1px rgba(167,139,250,.1);
+}
+.share-card-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse at 20% 20%, rgba(79,200,255,.08), transparent 50%),
+              radial-gradient(ellipse at 80% 80%, rgba(167,139,250,.1), transparent 50%);
+}
+.share-card-stars { position: absolute; inset: 0; z-index: 0; pointer-events: none }
+.share-star {
+  position: absolute; width: 2px; height: 2px;
+  background: var(--star); border-radius: 50%; opacity: .4;
+  animation: twinkle 3s ease-in-out infinite;
+}
+@keyframes twinkle { 0%,100% { opacity:.2 } 50% { opacity:.8 } }
+.share-card-header, .share-card-body, .share-card-footer { position: relative; z-index: 1 }
+.share-card-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 28px; padding-bottom: 16px;
+  border-bottom: 1px solid rgba(79,200,255,.15);
+}
+.share-brand { font-size: 13px; font-weight: 600; letter-spacing: .18em; color: var(--aurora) }
+.share-subtitle { font-size: 11px; color: var(--star-dim); letter-spacing: .12em; text-transform: uppercase }
+.share-category {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .18em;
+  color: var(--aurora-2); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.share-category::before { content:""; width:20px; height:1px; background:var(--aurora-2) }
+.share-topic {
+  font-family: var(--serif); font-size: clamp(26px,5vw,40px);
+  line-height: 1.05; letter-spacing: -.04em; font-weight: 300;
+  color: var(--star); margin: 0 0 16px;
+}
+.share-chart-info {
+  display: flex; gap: 16px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.share-chart-info span {
+  font-size: 12px; color: var(--aurora-3);
+  background: rgba(103,232,249,.08); border: 1px solid rgba(103,232,249,.2);
+  border-radius: 999px; padding: 3px 10px;
+}
+.share-preview {
+  font-size: 14px; color: var(--star-mid); line-height: 1.75;
+  border-left: 2px solid rgba(167,139,250,.4); padding-left: 14px; margin: 0;
+}
+.share-card-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 24px; padding-top: 16px;
+  border-top: 1px solid rgba(79,200,255,.12);
+  font-size: 11px; color: var(--star-dim);
+}
+.share-actions { display: flex; gap: 12px; flex-wrap: wrap }
+
 /* ── Responsive Tarot ─────────────────────────────────────────────── */
 @media(max-width:900px) {
   .tarot-hero { grid-template-columns: 1fr }

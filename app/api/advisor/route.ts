@@ -5,6 +5,7 @@ import { NextRequest } from "next/server";
 import OpenAI from "openai";
 import { calculateChart } from "@/lib/astrology";
 import { buildAdvisorPrompt } from "@/lib/advisorPrompt";
+import { calculateTransits, formatTransitForPrompt } from "@/lib/transit";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -34,7 +35,9 @@ export async function POST(req: NextRequest) {
       longitude: num(body.longitude, 100.5018),
     });
 
-    const prompt = buildAdvisorPrompt({ topic, situation, options, concern, goal, chart, category, advisorTone, selectedProvince });
+    const transitReport = await calculateTransits(chart);
+    const transitText = formatTransitForPrompt(transitReport);
+    const prompt = buildAdvisorPrompt({ topic, situation, options, concern, goal, chart, category, advisorTone, selectedProvince, transitText });
 
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
