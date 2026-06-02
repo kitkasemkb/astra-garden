@@ -197,6 +197,16 @@ function parseSections(answer: string): ResultSection[] {
     : [{ title: "ผลการวิเคราะห์", body: normalized }];
 }
 
+// ── Dropdown options ─────────────────────────────────────────────
+const YEARS_BE = Array.from({ length: 90 }, (_, i) => 2568 - i); // พ.ศ. 2479–2568
+const MONTHS_TH = [
+  "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
+  "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม",
+];
+const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
+const HOURS = Array.from({ length: 24 }, (_, i) => i);
+const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5); // ทุก 5 นาที
+
 export default function HomePage() {
   const [step, setStep] = useState<WizardStep>(0);
   const [category, setCategory] = useState("business");
@@ -210,8 +220,25 @@ export default function HomePage() {
   const [goal, setGoal] = useState(
     "อยากได้คำแนะนำที่ช่วยให้ตัดสินใจรอบคอบขึ้น",
   );
-  const [birthDate, setBirthDate] = useState("");
-  const [birthTime, setBirthTime] = useState("");
+  // วันเกิด/เวลาเกิด — dropdown แยกส่วน (แสดง พ.ศ. แปลงเป็น ค.ศ. ก่อนคำนวณ)
+  const [birthYearBE, setBirthYearBE] = useState("");
+  const [birthMonth, setBirthMonth] = useState("");
+  const [birthDay, setBirthDay] = useState("");
+  const [birthHour, setBirthHour] = useState("");
+  const [birthMinute, setBirthMinute] = useState("");
+
+  // computed strings สำหรับส่ง API (ค.ศ.)
+  const birthDate = useMemo(() => {
+    if (!birthYearBE || !birthMonth || !birthDay) return "";
+    const ce = Number(birthYearBE) - 543;
+    return `${ce}-${birthMonth.padStart(2,"0")}-${birthDay.padStart(2,"0")}`;
+  }, [birthYearBE, birthMonth, birthDay]);
+
+  const birthTime = useMemo(() => {
+    if (birthHour === "" || birthMinute === "") return "";
+    return `${birthHour.padStart(2,"0")}:${birthMinute.padStart(2,"0")}`;
+  }, [birthHour, birthMinute]);
+
   const [timezoneOffset, setTimezoneOffset] = useState(7);
   const [latitude, setLatitude] = useState(13.7563);
   const [longitude, setLongitude] = useState(100.5018);
@@ -468,23 +495,57 @@ export default function HomePage() {
                   </p>
                 </div>
 
-                <div className="birth-grid">
-                  <label className="lux-field">
-                    <span>วันเกิด</span>
-                    <input
-                      type="date"
-                      value={birthDate}
-                      onChange={(e) => setBirthDate(e.target.value)}
-                    />
-                  </label>
-                  <label className="lux-field">
-                    <span>เวลาเกิด</span>
-                    <input
-                      type="time"
-                      value={birthTime}
-                      onChange={(e) => setBirthTime(e.target.value)}
-                    />
-                  </label>
+                {/* วันเกิด */}
+                <div style={{ marginBottom: "20px" }}>
+                  <span className="lux-field" style={{ display:"block", marginBottom:"10px" }}>
+                    <span>วันเกิด (พ.ศ.)</span>
+                  </span>
+                  <div className="birth-grid" style={{ gap:"12px" }}>
+                    <label className="lux-field">
+                      <span>วัน</span>
+                      <select value={birthDay} onChange={e => setBirthDay(e.target.value)}>
+                        <option value="">-- วัน --</option>
+                        {DAYS.map(d => <option key={d} value={String(d)}>{d}</option>)}
+                      </select>
+                    </label>
+                    <label className="lux-field">
+                      <span>เดือน</span>
+                      <select value={birthMonth} onChange={e => setBirthMonth(e.target.value)}>
+                        <option value="">-- เดือน --</option>
+                        {MONTHS_TH.map((m, i) => <option key={i} value={String(i+1)}>{m}</option>)}
+                      </select>
+                    </label>
+                    <label className="lux-field">
+                      <span>ปี พ.ศ.</span>
+                      <select value={birthYearBE} onChange={e => setBirthYearBE(e.target.value)}>
+                        <option value="">-- ปี --</option>
+                        {YEARS_BE.map(y => <option key={y} value={String(y)}>{y}</option>)}
+                      </select>
+                    </label>
+                  </div>
+                </div>
+
+                {/* เวลาเกิด */}
+                <div style={{ marginBottom: "20px" }}>
+                  <div className="birth-grid" style={{ gap:"12px" }}>
+                    <label className="lux-field">
+                      <span>ชั่วโมงเกิด</span>
+                      <select value={birthHour} onChange={e => setBirthHour(e.target.value)}>
+                        <option value="">-- ชั่วโมง --</option>
+                        {HOURS.map(h => <option key={h} value={String(h)}>{String(h).padStart(2,"0")} น.</option>)}
+                      </select>
+                    </label>
+                    <label className="lux-field">
+                      <span>นาทีเกิด</span>
+                      <select value={birthMinute} onChange={e => setBirthMinute(e.target.value)}>
+                        <option value="">-- นาที --</option>
+                        {MINUTES.map(m => <option key={m} value={String(m)}>{String(m).padStart(2,"0")}</option>)}
+                      </select>
+                    </label>
+                  </div>
+                  <small style={{ color:"var(--star-dim)", fontSize:"11px", marginTop:"6px", display:"block" }}>
+                    ไม่รู้เวลาเกิดแน่ชัด ให้ประมาณช่วงเวลา เช่น ตีสี่ = 04:00
+                  </small>
                 </div>
 
                 <label className="lux-field">
