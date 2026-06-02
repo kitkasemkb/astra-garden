@@ -147,9 +147,9 @@ const tones = [
 
 const stepLabels = [
   "เริ่มต้น",
+  "ข้อมูลเกิด",
   "ตั้งคำถาม",
   "เล่าบริบท",
-  "ข้อมูลเกิด",
   "รายงาน",
 ];
 
@@ -346,11 +346,11 @@ export default function HomePage() {
 
   const canGoNext =
     step === 1
-      ? Boolean(topic.trim())
+      ? Boolean(birthDate && birthTime)
       : step === 2
-        ? Boolean(situation.trim())
+        ? Boolean(topic.trim())
         : step === 3
-          ? Boolean(birthDate && birthTime)
+          ? Boolean(situation.trim())
           : true;
 
   return (
@@ -457,100 +457,14 @@ export default function HomePage() {
 
           <section className="session-stage">
             {step === 1 && (
-              <div className="editorial-panel question-panel">
-                <div className="panel-number">01</div>
-                <div className="panel-heading">
-                  <span>Choose your theme</span>
-                  <h2>วันนี้อยากให้ดวงช่วยสะท้อนเรื่องไหนให้ชัดขึ้น</h2>
-                  <p>
-                    เลือกหมวดที่ใกล้กับความรู้สึกตอนนี้
-                    แล้วเขียนคำถามหลักในภาษาของคุณเอง
-                  </p>
-                </div>
-
-                <div className="premium-choice-grid">
-                  {categories.map((item) => (
-                    <button
-                      key={item.id}
-                      className={`premium-choice ${category === item.id ? "selected" : ""}`}
-                      onClick={() => selectCategory(item.id)}
-                    >
-                      <span>{item.label}</span>
-                      <small>{item.hint}</small>
-                    </button>
-                  ))}
-                </div>
-
-                <label className="lux-field statement-field">
-                  <span>คำถามหลัก</span>
-                  <input
-                    value={topic}
-                    onChange={(e) => setTopic(e.target.value)}
-                    placeholder="เช่น ควรเดินหน้าธุรกิจนี้ไหม"
-                  />
-                </label>
-              </div>
-            )}
-
-            {step === 2 && (
-              <div className="editorial-panel context-panel">
-                <div className="panel-number">02</div>
-                <div className="panel-heading narrow">
-                  <span>Tell the context</span>
-                  <h2>เล่าให้เหมือนคุยกับที่ปรึกษาส่วนตัว</h2>
-                  <p>
-                    ไม่ต้องเขียนให้สวย แค่เล่าความจริง ความลังเล
-                    และสิ่งที่คุณอยากให้ระบบช่วยมอง
-                  </p>
-                </div>
-
-                <label className="lux-field story-field">
-                  <span>สถานการณ์ตอนนี้</span>
-                  <textarea
-                    value={situation}
-                    onChange={(e) => setSituation(e.target.value)}
-                    placeholder="เช่น ตอนนี้กำลังคิดจะขยายกิจการ แต่ยังไม่แน่ใจเรื่องกระแสเงินสด ทีมงาน และจังหวะเวลา..."
-                  />
-                </label>
-
-                <div className="field-pair">
-                  <label className="lux-field">
-                    <span>ทางเลือกที่กำลังคิด</span>
-                    <input
-                      value={options}
-                      onChange={(e) => setOptions(e.target.value)}
-                      placeholder="เดินหน้าต่อ / พักก่อน / ทดลองเล็ก ๆ"
-                    />
-                  </label>
-                  <label className="lux-field">
-                    <span>สิ่งที่กังวลที่สุด</span>
-                    <input
-                      value={concern}
-                      onChange={(e) => setConcern(e.target.value)}
-                      placeholder="กลัวตัดสินใจเร็วไป / กลัวเสียโอกาส"
-                    />
-                  </label>
-                </div>
-
-                <label className="lux-field">
-                  <span>ผลลัพธ์ที่อยากได้</span>
-                  <input
-                    value={goal}
-                    onChange={(e) => setGoal(e.target.value)}
-                  />
-                </label>
-              </div>
-            )}
-
-            {step === 3 && (
               <div className="editorial-panel birth-panel">
-                <div className="panel-number">03</div>
+                <div className="panel-number">01</div>
                 <div className="panel-heading narrow">
                   <span>Birth data</span>
                   <h2>ข้อมูลเกิดสำหรับสร้างแผนที่ดวง</h2>
                   <p>
-                    ยึดพิกัดสถานที่เกิดจริงเป็นหลัก หากต้องการละเอียดกว่าระดับจังหวัด
-                    สามารถแก้ latitude/longitude เองได้
+                    ดวงชะตาเริ่มต้นจากวันและเวลาเกิด
+                    กรอกให้ถูกต้องเพื่อความแม่นยำในการทำนาย
                   </p>
                 </div>
 
@@ -623,7 +537,7 @@ export default function HomePage() {
                 <div className="tone-suite">
                   <div>
                     <span className="rail-label">Tone</span>
-                    <h3>อยากให้ที่ปรึกษาพูดกับคุณแบบไหน</h3>
+                    <h3>อยากให้หมอดูพูดกับคุณแบบไหน</h3>
                   </div>
                   <div className="premium-choice-grid tone-grid">
                     {tones.map((item) => (
@@ -638,6 +552,92 @@ export default function HomePage() {
                     ))}
                   </div>
                 </div>
+              </div>
+            )}
+
+            {step === 2 && (
+              <div className="editorial-panel question-panel">
+                <div className="panel-number">02</div>
+                <div className="panel-heading">
+                  <span>Choose your theme</span>
+                  <h2>อยากให้ดวงทำนายเรื่องไหน</h2>
+                  <p>
+                    เลือกหมวดที่ใกล้กับสิ่งที่อยากรู้
+                    แล้วเขียนคำถามในใจของคุณ
+                  </p>
+                </div>
+
+                <div className="premium-choice-grid">
+                  {categories.map((item) => (
+                    <button
+                      key={item.id}
+                      className={`premium-choice ${category === item.id ? "selected" : ""}`}
+                      onClick={() => selectCategory(item.id)}
+                    >
+                      <span>{item.label}</span>
+                      <small>{item.hint}</small>
+                    </button>
+                  ))}
+                </div>
+
+                <label className="lux-field statement-field">
+                  <span>คำถามหลัก</span>
+                  <input
+                    value={topic}
+                    onChange={(e) => setTopic(e.target.value)}
+                    placeholder="เช่น ควรเดินหน้าธุรกิจนี้ไหม"
+                  />
+                </label>
+              </div>
+            )}
+
+            {step === 3 && (
+              <div className="editorial-panel context-panel">
+                <div className="panel-number">03</div>
+                <div className="panel-heading narrow">
+                  <span>Tell the context</span>
+                  <h2>เล่าสถานการณ์ให้หมอดูฟัง</h2>
+                  <p>
+                    ยิ่งเล่าได้ละเอียด ดวงยิ่งแม่น
+                    ไม่ต้องเขียนสวย แค่เล่าความจริง
+                  </p>
+                </div>
+
+                <label className="lux-field story-field">
+                  <span>สถานการณ์ตอนนี้</span>
+                  <textarea
+                    value={situation}
+                    onChange={(e) => setSituation(e.target.value)}
+                    placeholder="เช่น ตอนนี้กำลังคิดจะขยายกิจการ แต่ยังไม่แน่ใจเรื่องกระแสเงินสด ทีมงาน และจังหวะเวลา..."
+                  />
+                </label>
+
+                <div className="field-pair">
+                  <label className="lux-field">
+                    <span>ทางเลือกที่กำลังคิด</span>
+                    <input
+                      value={options}
+                      onChange={(e) => setOptions(e.target.value)}
+                      placeholder="เดินหน้าต่อ / พักก่อน / ทดลองเล็ก ๆ"
+                    />
+                  </label>
+                  <label className="lux-field">
+                    <span>สิ่งที่กังวลที่สุด</span>
+                    <input
+                      value={concern}
+                      onChange={(e) => setConcern(e.target.value)}
+                      placeholder="กลัวตัดสินใจเร็วไป / กลัวเสียโอกาส"
+                    />
+                  </label>
+                </div>
+
+                <label className="lux-field">
+                  <span>ผลลัพธ์ที่อยากได้</span>
+                  <input
+                    value={goal}
+                    onChange={(e) => setGoal(e.target.value)}
+                  />
+                </label>
               </div>
             )}
 
@@ -669,9 +669,9 @@ export default function HomePage() {
                     <button
                       className="luxury-button wide-button"
                       onClick={submit}
-                      disabled={!birthDate || !birthTime || !situation.trim()}
+                      disabled={!birthDate || !birthTime || !topic.trim()}
                     >
-                      คำนวณดวงและอ่านคำแนะนำ
+                      คำนวณดวงและทำนาย
                     </button>
                   </div>
                 )}
@@ -829,7 +829,7 @@ export default function HomePage() {
                   className="luxury-button"
                   onClick={submit}
                   disabled={
-                    loading || !birthDate || !birthTime || !situation.trim()
+                    loading || !birthDate || !birthTime || !topic.trim()
                   }
                 >
                   อ่านใหม่อีกครั้ง
