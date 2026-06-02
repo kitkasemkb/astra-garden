@@ -1267,11 +1267,26 @@ body::before {
     position: sticky; top: 8px; z-index: 40; margin: 0 0 14px;
     padding: 8px 12px; border-radius: 18px;
   }
-  .brand-lockup { gap: 9px; min-width: 0 }
-  .brand-sigil { width: 30px; height: 30px; font-size: 13px }
-  .brand-lockup strong { font-size: 10px }
+  /* ── Topbar mobile fix ── */
+  .brand-lockup { gap: 8px; min-width: 0; flex: 1; overflow: hidden }
+  .brand-sigil { width: 28px; height: 28px; font-size: 12px; flex-shrink: 0 }
+  .brand-lockup strong { font-size: 9px; letter-spacing: .08em; white-space: nowrap }
+  .brand-lockup small { font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; display: block }
   .topbar-meta { display: none }
   .topbar-tarot-mobile { display: flex; align-items: center }
+  .topbar-right { gap: 6px; flex-shrink: 0 }
+  .user-login-btn { font-size: 10px; padding: 4px 8px }
+  .user-avatar-btn { width: 28px; height: 28px; font-size: 12px }
+
+  /* ── Tarot banner mobile ── */
+  .tarot-center-banner {
+    grid-template-columns: 1fr; gap: 14px; padding: 18px 14px; margin-bottom: 16px; border-radius: 20px;
+  }
+  .tarot-center-banner h2 { font-size: 26px; margin-bottom: 8px }
+  .tarot-center-banner p { font-size: 13px }
+  .tarot-banner-cards { justify-content: center }
+  .tarot-banner-card { width: 54px; height: 90px; border-radius: 8px }
+  .tbc-0, .tbc-4 { display: none }
 
   .landing-scene { display: block; min-height: auto; margin-top: 6px }
   .landing-copy { padding: 18px 0 6px }
