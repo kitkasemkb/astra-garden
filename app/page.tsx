@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AspectLegend, AstrologyWheel } from "@/components/AstrologyWheel";
+import { createClient } from "@/lib/supabase";
 
 type Chart = {
   ascendant: { longitude: number; sign: string; degreeInSign: number };
@@ -254,6 +255,8 @@ export default function HomePage() {
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const answerRef = useRef<string>("");
+  const chartRef = useRef<Chart | null>(null);
 
   const currentCategory = useMemo(
     () => categories.find((x) => x.id === category) || categories[0],
@@ -327,11 +330,30 @@ export default function HomePage() {
           const data = JSON.parse(line.slice(6));
           if (data.type === "chart") {
             setChart(data.chart);
+            chartRef.current = data.chart;
             setLoading(false);
           } else if (data.type === "delta") {
-            setAnswer(prev => prev + data.text);
+            setAnswer(prev => { answerRef.current = prev + data.text; return prev + data.text; });
           } else if (data.type === "done") {
             setLoading(false);
+            // Auto-save to history if logged in
+            try {
+              const supabase = createClient();
+              const { data: { session } } = await supabase.auth.getSession();
+              if (session) {
+                await supabase.from("readings").insert({
+                  user_id: session.user.id,
+                  type: "astrology",
+                  category,
+                  topic,
+                  birth_date: birthDate,
+                  birth_time: birthTime,
+                  province: selectedProvince,
+                  answer: answerRef.current,
+                  chart: chartRef.current,
+                });
+              }
+            } catch {}
           } else if (data.type === "error") {
             setAnswer(data.message);
             setLoading(false);

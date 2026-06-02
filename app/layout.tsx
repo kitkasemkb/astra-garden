@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Sarabun } from "next/font/google";
+import UserMenu from "@/components/UserMenu";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -23,7 +24,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="th" className={`${cormorant.variable} ${sarabun.variable}`}>
-      <body>{children}</body>
+      <body>
+        <div id="user-menu-portal" style={{ position:"fixed", top:16, right:16, zIndex:50 }}>
+          <UserMenu />
+        </div>
+        {children}
+      </body>
     </html>
   );
 }
