@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UserMenu from "@/components/UserMenu";
+import { createClient } from "@/lib/supabase";
 
 const SIGNS = [
   { id:"aries",       th:"เมษ",      en:"Aries",       date:"21 มี.ค. – 19 เม.ย.", symbol:"♈", color:"rgba(255,80,80,.15)" },
@@ -24,6 +25,22 @@ export default function HoroscopePage() {
   const [reading, setReading] = useState("");
   const [loading, setLoading] = useState(false);
   const today = new Date().toLocaleDateString("th-TH", { weekday:"long", year:"numeric", month:"long", day:"numeric" });
+
+  // Auto-detect zodiac from profile
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data }) => {
+      const meta = data.session?.user?.user_metadata;
+      if (meta?.zodiac_sign) {
+        const sign = SIGNS.find(s => s.id === meta.zodiac_sign);
+        if (sign) {
+          setSelected(sign);
+          // Auto-load horoscope
+          getHoroscope(sign);
+        }
+      }
+    });
+  }, []);
 
   async function getHoroscope(sign: typeof SIGNS[0]) {
     setSelected(sign);

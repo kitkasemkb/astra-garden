@@ -12,7 +12,7 @@ const CATEGORIES = [
 ];
 
 export default function TarotPage() {
-  const [step, setStep] = useState<"intro" | "question" | "drawing" | "reading">("intro");
+  const [step, setStep] = useState<"intro" | "question" | "shuffling" | "drawing" | "reading">("intro");
   const [category, setCategory] = useState("life");
   const [question, setQuestion] = useState("");
   const [spread, setSpread] = useState<CelticCrossSpread | null>(null);
@@ -27,8 +27,11 @@ export default function TarotPage() {
   }, [interpretation, isStreaming]);
 
   async function startReading() {
-    setStep("drawing");
+    // แสดง shuffle animation ก่อน 2.8 วินาที
+    setStep("shuffling");
     setRevealedCards(new Set());
+    await new Promise(r => setTimeout(r, 2800));
+    setStep("drawing");
     setInterpretation("");
     setSelectedCard(null);
 
@@ -179,6 +182,27 @@ export default function TarotPage() {
             {["✦","☽","☉","♄","♃"].map((s, i) => (
               <div key={i} className={`tarot-float-card float-${i}`}>{s}</div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* SHUFFLE ANIMATION */}
+      {step === "shuffling" && (
+        <section className="tarot-shuffle-screen">
+          <div className="shuffle-bg-glow" />
+          <div className="shuffle-cards-wrap">
+            {Array.from({length:7}).map((_,i) => (
+              <div key={i} className={`shuffle-card sc-${i}`}>
+                <div className="tarot-back-pattern" style={{width:"100%",height:"100%",display:"grid",placeItems:"center"}}>
+                  <span style={{fontFamily:"var(--serif)",fontSize:28,color:"rgba(167,139,250,.7)"}}>✦</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="shuffle-text">
+            <div className="draw-orbit" style={{width:56,height:56,margin:"0 auto 16px"}} />
+            <h2>กำลังสับไพ่…</h2>
+            <p>จักรวาลกำลังเลือกไพ่ที่เหมาะกับคุณ</p>
           </div>
         </section>
       )}

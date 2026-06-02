@@ -222,6 +222,27 @@ export default function HomePage() {
   const [goal, setGoal] = useState(
     "อยากได้คำแนะนำที่ช่วยให้ตัดสินใจรอบคอบขึ้น",
   );
+  const [profileLoaded, setProfileLoaded] = useState(false);
+
+  // โหลดข้อมูลเกิดจาก profile อัตโนมัติ
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data }) => {
+      const meta = data.session?.user?.user_metadata;
+      if (meta?.birth_year_be) {
+        setBirthYearBE(String(meta.birth_year_be));
+        setBirthMonth(String(meta.birth_month));
+        setBirthDay(String(meta.birth_day));
+        setBirthHour(String(meta.birth_hour));
+        setBirthMinute(String(meta.birth_minute ?? 0));
+        if (meta.province) setSelectedProvince(meta.province);
+        if (meta.latitude) setLatitude(meta.latitude);
+        if (meta.longitude) setLongitude(meta.longitude);
+        setProfileLoaded(true);
+      }
+    });
+  }, []);
+
   // วันเกิด/เวลาเกิด — dropdown แยกส่วน (แสดง พ.ศ. แปลงเป็น ค.ศ. ก่อนคำนวณ)
   const [birthYearBE, setBirthYearBE] = useState("");
   const [birthMonth, setBirthMonth] = useState("");
@@ -456,9 +477,6 @@ export default function HomePage() {
               <button className="luxury-button" onClick={() => setStep(1)}>
                 เริ่มอ่านจังหวะชีวิต
               </button>
-              <a href="/tarot" className="landing-tarot-btn">
-                🔮 ดูไพ่ทาโร่
-              </a>
             </div>
             <p className="landing-action-hint">อ่านแบบผ่อนคลาย ใช้เป็นมุมมองประกอบ ไม่ใช่คำตัดสินแทนคุณ</p>
           </div>
@@ -485,6 +503,25 @@ export default function HomePage() {
               <span>Birth Chart</span>
               <span>Life Direction</span>
               <span>Gentle Advice</span>
+            </div>
+          </div>
+
+          <div className="tarot-center-banner">
+            <div className="tarot-banner-left">
+              <span className="kicker">✦ Golden Dawn · Rider-Waite · Thoth</span>
+              <h2>ไพ่ทาโร่<br /><em>เปิดเผยชะตาชีวิต</em></h2>
+              <p>Celtic Cross 10 ใบ อ่านทุกมิติพร้อม AI ตีความ</p>
+              <a href="/tarot" className="luxury-button" style={{ textDecoration:"none", display:"inline-flex", marginTop:16 }}>
+                🔮 เปิดไพ่เปิดชะตา
+              </a>
+            </div>
+            <div className="tarot-banner-cards">
+              {["major-0","major-19","major-21","cups-queen","wands-king"].map((id,i) => (
+                <div key={id} className={`tarot-banner-card tbc-${i}`}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={`/tarot/${id}.jpg`} alt="" />
+                </div>
+              ))}
             </div>
           </div>
 
@@ -536,13 +573,25 @@ export default function HomePage() {
                   <span>Birth data</span>
                   <h2>ข้อมูลเกิดสำหรับสร้างแผนที่ดวง</h2>
                   <p>
-                    ดวงชะตาเริ่มต้นจากวันและเวลาเกิด
-                    กรอกให้ถูกต้องเพื่อความแม่นยำในการทำนาย
+                    {profileLoaded
+                      ? "✅ โหลดข้อมูลเกิดจากโปรไฟล์แล้ว กดไปต่อได้เลย"
+                      : "ดวงชะตาเริ่มต้นจากวันและเวลาเกิด กรอกให้ถูกต้องเพื่อความแม่นยำ"}
                   </p>
                 </div>
 
-                {/* วันเกิด */}
-                <div style={{ marginBottom: "20px" }}>
+                {profileLoaded && (
+                  <div className="profile-birth-summary">
+                    <span>🎂</span>
+                    <div>
+                      <strong>{birthDay}/{birthMonth}/{birthYearBE} เวลา {birthHour.padStart(2,"0")}:{birthMinute.padStart(2,"0")} น.</strong>
+                      <small>📍 {selectedProvince}</small>
+                    </div>
+                    <button className="auth-link" style={{fontSize:11}} onClick={() => setProfileLoaded(false)}>แก้ไข</button>
+                  </div>
+                )}
+
+                {/* วันเกิด — ซ่อนถ้า profileLoaded */}
+                <div style={{ marginBottom: "20px", display: profileLoaded ? "none" : "block" }}>
                   <span className="lux-field" style={{ display:"block", marginBottom:"10px" }}>
                     <span>วันเกิด (พ.ศ.)</span>
                   </span>
@@ -571,8 +620,8 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* เวลาเกิด */}
-                <div style={{ marginBottom: "20px" }}>
+                {/* เวลาเกิด — ซ่อนถ้า profileLoaded */}
+                <div style={{ marginBottom: "20px", display: profileLoaded ? "none" : "block" }}>
                   <div className="birth-grid" style={{ gap:"12px" }}>
                     <label className="lux-field">
                       <span>ชั่วโมงเกิด</span>
