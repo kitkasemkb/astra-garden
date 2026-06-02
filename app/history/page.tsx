@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { createClient, type Reading } from "@/lib/supabase";
+import UserMenu from "@/components/UserMenu";
 
 const CATEGORY_EMOJI: Record<string, string> = {
   business:"💼", career:"🏆", money:"💰", relationship:"💑", life:"🌟",
@@ -55,8 +56,9 @@ export default function HistoryPage() {
             <small>Astrology translated into gentle guidance</small>
           </span>
         </a>
-        <div className="topbar-meta">
-          <span>ประวัติการดูดวง</span>
+        <div className="topbar-right">
+          <div className="topbar-meta"><span>ประวัติการดูดวง</span></div>
+          <UserMenu />
         </div>
       </header>
 

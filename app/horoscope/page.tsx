@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import UserMenu from "@/components/UserMenu";
 
 const SIGNS = [
   { id:"aries",       th:"เมษ",      en:"Aries",       date:"21 มี.ค. – 19 เม.ย.", symbol:"♈", color:"rgba(255,80,80,.15)" },
@@ -65,9 +66,12 @@ export default function HoroscopePage() {
           <span className="brand-sigil">✦</span>
           <span><strong>ASTRA GARDEN</strong><small>Astrology translated into gentle guidance</small></span>
         </a>
-        <div className="topbar-meta">
-          <span>ดวงรายวัน</span>
-          <span>{today}</span>
+        <div className="topbar-right">
+          <div className="topbar-meta">
+            <span>ดวงรายวัน</span>
+            <span>{today}</span>
+          </div>
+          <UserMenu />
         </div>
       </header>
 

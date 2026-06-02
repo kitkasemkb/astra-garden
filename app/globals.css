@@ -116,6 +116,10 @@ body::before {
 }
 .topbar-meta span+span { border-left: 1px solid var(--line); padding-left: 18px }
 
+.topbar-right {
+  display: flex; align-items: center; gap: 10px;
+}
+
 /* ── Labels ─────────────────────────────────────────────────────── */
 .kicker,.rail-label,.panel-heading span,.chart-titlebar span,
 .report-opener span,.loading-panel>span {

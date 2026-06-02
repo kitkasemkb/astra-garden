@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { CELTIC_CROSS_POSITIONS, type CelticCrossSpread, type DrawnCard } from "@/lib/tarot";
+import UserMenu from "@/components/UserMenu";
 
 const CATEGORIES = [
   { id: "love",     label: "ความรัก",    emoji: "💑" },
@@ -149,9 +150,12 @@ export default function TarotPage() {
             <small>Astrology translated into gentle guidance</small>
           </span>
         </a>
-        <div className="topbar-meta">
-          <span>Tarot Reading</span>
-          <span>Celtic Cross · 10 Cards</span>
+        <div className="topbar-right">
+          <div className="topbar-meta">
+            <span>Tarot Reading</span>
+            <span>Celtic Cross · 10 Cards</span>
+          </div>
+          <UserMenu />
         </div>
       </header>
 

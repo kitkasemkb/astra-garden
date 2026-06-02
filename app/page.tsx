@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AspectLegend, AstrologyWheel } from "@/components/AstrologyWheel";
 import { createClient } from "@/lib/supabase";
+import UserMenu from "@/components/UserMenu";
 
 type Chart = {
   ascendant: { longitude: number; sign: string; degreeInSign: number };
@@ -433,12 +434,14 @@ export default function HomePage() {
             <small>Astrology translated into gentle guidance</small>
           </span>
         </button>
-        <div className="topbar-meta">
-          <span>Personal reading</span>
-          <a href="/tarot" className="topbar-tarot-btn">🔮 ไพ่ทาโร่</a>
+        <div className="topbar-right">
+          <div className="topbar-meta">
+            <span>Personal reading</span>
+            <a href="/tarot" className="topbar-tarot-btn">🔮 ไพ่ทาโร่</a>
+          </div>
+          <a href="/tarot" className="topbar-tarot-mobile">🔮</a>
+          <UserMenu />
         </div>
-        {/* แสดงเฉพาะมือถือ */}
-        <a href="/tarot" className="topbar-tarot-mobile">🔮</a>
       </header>
 
       {step === 0 && (

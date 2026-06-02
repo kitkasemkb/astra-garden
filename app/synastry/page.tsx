@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
+import UserMenu from "@/components/UserMenu";
 
 const MONTHS_TH = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
 const DAYS = Array.from({length:31},(_,i)=>i+1);
@@ -130,7 +131,10 @@ export default function SynastryPage() {
           <span className="brand-sigil">✦</span>
           <span><strong>ASTRA GARDEN</strong><small>Astrology translated into gentle guidance</small></span>
         </a>
-        <div className="topbar-meta"><span>Synastry</span><span>ความเข้ากันของดวง</span></div>
+        <div className="topbar-right">
+          <div className="topbar-meta"><span>Synastry</span><span>ความเข้ากันของดวง</span></div>
+          <UserMenu />
+        </div>
       </header>
 
       <div className="synastry-layout">
