@@ -106,11 +106,12 @@ export default function DailyBriefingPage() {
     }
   }
 
-  const sections = reading.split("\n").reduce<{ title: string; body: string[] }[]>((acc, line) => {
-    if (line.startsWith("**") && line.endsWith("**")) {
+  const sections = reading.split("\n").reduce<{ title: string; body: string[] }[]>((acc, raw) => {
+    const line = raw.trim();
+    if (/^\*\*[^*]+\*\*$/.test(line)) {
       acc.push({ title: line.replace(/\*\*/g, ""), body: [] });
-    } else if (acc.length > 0 && line.trim()) {
-      acc[acc.length - 1].body.push(line);
+    } else if (acc.length > 0 && line) {
+      acc[acc.length - 1].body.push(line.replace(/\*\*/g, ""));
     }
     return acc;
   }, []);
@@ -147,7 +148,7 @@ export default function DailyBriefingPage() {
         {/* Header */}
         <div className="horoscope-header">
           <span className="kicker">✦ Personal Daily Briefing</span>
-          <h1 className="horoscope-title">
+          <h1 className="horoscope-title" style={{ fontSize:"clamp(28px,5vw,64px)", wordBreak:"keep-all" }}>
             {userName ? `สวัสดี คุณ${userName}` : "Daily Briefing ของคุณ"}
           </h1>
           <p style={{ color:"var(--star-dim)", marginTop:4 }}>{today}</p>
@@ -195,8 +196,16 @@ export default function DailyBriefingPage() {
           </div>
         )}
 
+        {/* Generating indicator */}
+        {generating && (
+          <div style={{ display:"flex", gap:12, alignItems:"center", color:"var(--aurora)", padding:"20px 0" }}>
+            <div className="draw-orbit" style={{ width:36, height:36 }} />
+            <span>ดวงดาวกำลังสร้าง briefing ของคุณ…</span>
+          </div>
+        )}
+
         {/* AI Briefing sections */}
-        {sections.length > 0 && (
+        {!generating && sections.length > 0 && (
           <div className="briefing-grid">
             {sections.map((sec, i) => (
               <div key={i} className={`briefing-card ${i === 0 ? "briefing-card-wide" : ""}`}>
@@ -208,11 +217,14 @@ export default function DailyBriefingPage() {
           </div>
         )}
 
-        {/* Generating indicator */}
-        {generating && !sections.length && (
-          <div style={{ display:"flex", gap:12, alignItems:"center", color:"var(--aurora)", padding:"20px 0" }}>
-            <div className="draw-orbit" style={{ width:36, height:36 }} />
-            <span>ดวงดาวกำลังส่ง briefing ของคุณ…</span>
+        {/* Fallback: raw reading if sections failed to parse */}
+        {!generating && reading && sections.length === 0 && (
+          <div className="briefing-card briefing-card-wide" style={{ marginBottom:28 }}>
+            <div className="briefing-card-icon">✦</div>
+            <h3 className="briefing-card-title">Daily Briefing ของคุณ</h3>
+            {reading.split("\n").filter(l => l.trim()).map((line, i) => (
+              <p key={i}>{line.replace(/\*\*/g, "")}</p>
+            ))}
           </div>
         )}
 
