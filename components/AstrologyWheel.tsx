@@ -280,6 +280,121 @@ export function AstrologyWheel({ chart }: { chart: Chart }) {
   );
 }
 
+// Decorative wheel for hero section — no birth data needed
+const DECO_PLANETS = [
+  { sym:"☉", lon:30,  color:"#fbbf24" },
+  { sym:"☽", lon:95,  color:"#e2e8f0" },
+  { sym:"♀", lon:160, color:"#f472b6" },
+  { sym:"♂", lon:220, color:"#f87171" },
+  { sym:"♃", lon:290, color:"#fb923c" },
+];
+
+const DECO_ASPECTS = [
+  { from:30, to:160 }, { from:95, to:290 }, { from:160, to:220 }, { from:30, to:220 },
+];
+
+export function DecorativeWheel() {
+  const cx = 200, cy = 200;
+  const outerDeco = 192, outer = 182, signOuter = 180, signInner = 150, chartInner = 132, aspectR = 112;
+
+  return (
+    <svg viewBox="0 0 400 400" className="deco-wheel" aria-hidden="true">
+      <defs>
+        <radialGradient id="dBg" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#0d1a35"/>
+          <stop offset="100%" stopColor="#04080f"/>
+        </radialGradient>
+        {ELEMENT_IDS.map((id,i) => (
+          <radialGradient key={id} id={`de-${id}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={ELEMENT_COLORS[i]} stopOpacity="0.3"/>
+            <stop offset="100%" stopColor={ELEMENT_COLORS[i]} stopOpacity="0.08"/>
+          </radialGradient>
+        ))}
+        <filter id="dGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <radialGradient id="dCenter" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="rgba(79,200,255,0.18)"/>
+          <stop offset="100%" stopColor="rgba(79,200,255,0)"/>
+        </radialGradient>
+      </defs>
+
+      <circle cx={cx} cy={cy} r={outer} fill="url(#dBg)"/>
+      <circle cx={cx} cy={cy} r={outerDeco} fill="none" stroke="rgba(79,200,255,0.35)" strokeWidth="1"/>
+      <circle cx={cx} cy={cy} r={outer}     fill="none" stroke="rgba(79,200,255,0.55)" strokeWidth="1"/>
+
+      {/* Outer ticks */}
+      {Array.from({length:72}).map((_,i) => {
+        const isMajor = i % 6 === 0;
+        const p1 = polar(cx,cy,outerDeco,i*5);
+        const p2 = polar(cx,cy,outer+(isMajor?8:4),i*5);
+        return <line key={i} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+          stroke={isMajor?"rgba(79,200,255,0.7)":"rgba(79,200,255,0.25)"}
+          strokeWidth={isMajor?1.2:0.7}/>;
+      })}
+
+      {/* Sign segments */}
+      {ZODIAC_SYMBOLS.map((_,i) => (
+        <path key={i} d={arc(cx,cy,signOuter,signInner,i*30,(i+1)*30)}
+          fill={`url(#de-${ELEMENT_IDS[i%4]})`}
+          stroke={ELEMENT_COLORS[i%4]} strokeWidth="0.4" strokeOpacity="0.4"/>
+      ))}
+      {Array.from({length:12}).map((_,i) => {
+        const a=polar(cx,cy,signOuter,i*30), b=polar(cx,cy,signInner,i*30);
+        return <line key={i} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="rgba(79,200,255,0.3)" strokeWidth="0.8"/>;
+      })}
+
+      {/* Zodiac symbols */}
+      {ZODIAC_SYMBOLS.map((sym,i) => {
+        const mid=i*30+15, lbl=polar(cx,cy,166,mid), color=ELEMENT_COLORS[i%4];
+        return <text key={i} x={lbl.x} y={lbl.y} textAnchor="middle" dominantBaseline="middle"
+          fontSize="12" fill={color} fillOpacity="0.8"
+          transform={`rotate(${-mid} ${lbl.x} ${lbl.y})`}>{sym}</text>;
+      })}
+
+      <circle cx={cx} cy={cy} r={chartInner} fill="none" stroke="rgba(79,200,255,0.2)" strokeWidth="1"/>
+      <circle cx={cx} cy={cy} r={60} fill="url(#dCenter)"/>
+
+      {/* Aspect lines */}
+      {DECO_ASPECTS.map((a,i) => {
+        const f=polar(cx,cy,aspectR,a.from), t=polar(cx,cy,aspectR,a.to);
+        return <line key={i} x1={f.x} y1={f.y} x2={t.x} y2={t.y}
+          stroke="rgba(167,139,250,0.35)" strokeWidth="0.8" strokeDasharray="6 5"/>;
+      })}
+
+      {/* Planets */}
+      {DECO_PLANETS.map((p,i) => {
+        const pt=polar(cx,cy,aspectR+(i%2)*8,p.lon);
+        return <g key={i} filter="url(#dGlow)">
+          <circle cx={pt.x} cy={pt.y} r={11} fill={`${p.color}18`} stroke={p.color} strokeWidth="1"/>
+          <text x={pt.x} y={pt.y+0.5} textAnchor="middle" dominantBaseline="middle"
+            fontSize="11" fill={p.color}>{p.sym}</text>
+        </g>;
+      })}
+
+      {/* ASC / MC labels */}
+      {[{lon:0,label:"ASC"},{lon:90,label:"MC"}].map(({lon,label}) => {
+        const p=polar(cx,cy,142,lon), t1=polar(cx,cy,152,lon), t2=polar(cx,cy,124,lon);
+        return <g key={label}>
+          <line x1={t1.x} y1={t1.y} x2={t2.x} y2={t2.y} stroke="#4fc3f7" strokeWidth="1.2"/>
+          <text x={p.x} y={p.y} textAnchor="middle" dominantBaseline="middle"
+            fontSize="6" letterSpacing="1" fontWeight="700" fill="#4fc3f7">{label}</text>
+        </g>;
+      })}
+
+      {/* Center */}
+      {[0,45,90,135,180,225,270,315].map(deg => {
+        const inn=polar(cx,cy,7,deg), out2=polar(cx,cy,16,deg+22.5), outp=polar(cx,cy,22,deg);
+        return <path key={deg} d={`M${cx} ${cy} L${inn.x} ${inn.y} L${out2.x} ${out2.y} L${outp.x} ${outp.y}`}
+          fill="none" stroke="rgba(79,200,255,0.4)" strokeWidth="0.7"/>;
+      })}
+      <circle cx={cx} cy={cy} r={5} fill="rgba(79,200,255,0.25)" stroke="rgba(79,200,255,0.7)" strokeWidth="0.8"/>
+      <circle cx={cx} cy={cy} r={2} fill="rgba(79,200,255,0.9)"/>
+    </svg>
+  );
+}
+
 export function AspectLegend() {
   return (
     <div className="aspect-legend">

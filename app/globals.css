@@ -238,6 +238,15 @@ body::before {
 .mini-zodiac b  { left: 7%;  top: 48% }
 .mini-zodiac em { right: 14%; top: 24% }
 
+.deco-wheel {
+  width: 100%; height: auto; display: block;
+  animation: decoSpin 120s linear infinite;
+  filter: drop-shadow(0 0 32px rgba(79,200,255,.18));
+}
+@keyframes decoSpin {
+  from { transform: rotate(0deg) }
+  to   { transform: rotate(360deg) }
+}
 .art-note { right: 12px; bottom: 54px; width: 232px; padding: 18px; border-radius: 18px }
 .art-note small,.art-list span {
   display: block; color: var(--star-dim); font-size: 10px;

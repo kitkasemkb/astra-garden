@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AspectLegend, AstrologyWheel } from "@/components/AstrologyWheel";
+import { AspectLegend, AstrologyWheel, DecorativeWheel } from "@/components/AstrologyWheel";
 import { createClient } from "@/lib/supabase";
 import UserMenu from "@/components/UserMenu";
 
@@ -486,13 +486,7 @@ export default function HomePage() {
             <div className="floating-orb orb-two">☾</div>
             <div className="floating-orb orb-three">✧</div>
             <div className="art-card art-main">
-              <div className="mini-zodiac">
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <i key={i} style={{ transform: `rotate(${i * 30}deg)` }} />
-                ))}
-                <b>ASC</b>
-                <em>MC</em>
-              </div>
+              <DecorativeWheel />
             </div>
             <div className="art-card art-note">
               <small>Today’s theme</small>
