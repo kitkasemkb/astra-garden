@@ -2,10 +2,17 @@
 import { useEffect, useState } from "react";
 import { createClient, type Reading } from "@/lib/supabase";
 import UserMenu from "@/components/UserMenu";
+import { IconWork, IconTrophy, IconMoney, IconRelationship, IconLife, IconBalance, IconCrystalBall, IconStar, IconHistory, IconGalaxy } from "@/components/AstraIcons";
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  business:"💼", career:"🏆", money:"💰", relationship:"💑", life:"🌟",
-  love:"💑", decision:"⚖️", tarot:"🔮",
+const CATEGORY_ICON: Record<string, React.ReactNode> = {
+  business:     <IconWork size={18}/>,
+  career:       <IconTrophy size={18}/>,
+  money:        <IconMoney size={18}/>,
+  relationship: <IconRelationship size={18}/>,
+  life:         <IconLife size={18}/>,
+  love:         <IconRelationship size={18}/>,
+  decision:     <IconBalance size={18}/>,
+  tarot:        <IconCrystalBall size={18}/>,
 };
 
 export default function HistoryPage() {
@@ -75,7 +82,7 @@ export default function HistoryPage() {
 
           {!loading && readings.length === 0 && (
             <div className="history-empty">
-              <span>🔮</span>
+              <span><IconCrystalBall size={40}/></span>
               <p>ยังไม่มีประวัติการดูดวง<br/>เริ่มอ่านดวงแล้วบันทึกได้เลย</p>
               <a href="/" className="luxury-button" style={{textDecoration:"none",display:"inline-block",marginTop:12}}>เริ่มดูดวง</a>
             </div>
@@ -89,13 +96,13 @@ export default function HistoryPage() {
                 onClick={() => setSelected(r)}
               >
                 <span className="history-emoji">
-                  {CATEGORY_EMOJI[r.category || r.type] || "✦"}
+                  {CATEGORY_ICON[r.category || r.type] || <IconGalaxy size={18}/>}
                 </span>
                 <div className="history-item-info">
                   <strong>{r.topic || (r.type === "tarot" ? "ไพ่ทาโร่" : "ดูดวง")}</strong>
                   <small>{formatDate(r.created_at)}</small>
                 </div>
-                <span className="history-type-badge">{r.type === "tarot" ? "🔮" : "⭐"}</span>
+                <span className="history-type-badge">{r.type === "tarot" ? <IconCrystalBall size={13}/> : <IconStar size={13}/>}</span>
               </button>
             ))}
           </div>
@@ -105,7 +112,7 @@ export default function HistoryPage() {
         <section className="history-detail">
           {!selected && (
             <div className="history-detail-empty">
-              <span>📖</span>
+              <span><IconHistory size={40}/></span>
               <p>เลือกการดูดวงจากรายการเพื่อดูรายละเอียด</p>
             </div>
           )}

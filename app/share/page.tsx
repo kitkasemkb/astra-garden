@@ -1,6 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { IconCrystalBall } from "@/components/AstraIcons";
 
 function ShareContent() {
   const params = useSearchParams();
@@ -42,7 +43,7 @@ function ShareContent() {
         </div>
         <footer className="share-card-footer">
           <span>astra-garden.vercel.app</span>
-          <span>🔮 ดูดวงดาวของคุณ</span>
+          <span style={{display:"inline-flex",alignItems:"center",gap:6}}><IconCrystalBall size={14}/> ดูดวงดาวของคุณ</span>
         </footer>
       </div>
       <div className="share-actions">

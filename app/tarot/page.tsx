@@ -2,13 +2,14 @@
 import { useState, useRef, useEffect } from "react";
 import { CELTIC_CROSS_POSITIONS, type CelticCrossSpread, type DrawnCard } from "@/lib/tarot";
 import UserMenu from "@/components/UserMenu";
+import { IconRelationship, IconWork, IconMoney, IconLife, IconBalance, IconGalaxy, IconCrystalBall, IconStar } from "@/components/AstraIcons";
 
 const CATEGORIES = [
-  { id: "love",     label: "ความรัก",    emoji: "💑" },
-  { id: "career",   label: "การงาน",    emoji: "💼" },
-  { id: "money",    label: "การเงิน",   emoji: "💰" },
-  { id: "life",     label: "ชีวิตทั่วไป", emoji: "🌟" },
-  { id: "decision", label: "การตัดสินใจ", emoji: "⚖️" },
+  { id: "love",     label: "ความรัก",      icon: <IconRelationship size={22}/> },
+  { id: "career",   label: "การงาน",       icon: <IconWork size={22}/> },
+  { id: "money",    label: "การเงิน",      icon: <IconMoney size={22}/> },
+  { id: "life",     label: "ชีวิตทั่วไป",  icon: <IconLife size={22}/> },
+  { id: "decision", label: "การตัดสินใจ",  icon: <IconBalance size={22}/> },
 ];
 
 export default function TarotPage() {
@@ -170,9 +171,9 @@ export default function TarotPage() {
             <h1 className="tarot-title">ไพ่ทาโร่<br /><em>เปิดเผยชะตาชีวิต</em></h1>
             <p>ไพ่ทาโร่ 78 ใบที่สะท้อนพลังงานจักรวาล Celtic Cross Spread 10 ใบ อ่านทุกมิติของชีวิตด้วยระบบที่แม่นยำที่สุดในโลก</p>
             <div className="tarot-features">
-              <div><span>🌌</span><p>Golden Dawn + RWS + Thoth</p></div>
-              <div><span>🔮</span><p>Celtic Cross 10 ใบ</p></div>
-              <div><span>⭐</span><p>AI ตีความเชื่อมดวงดาว</p></div>
+              <div><IconGalaxy size={22}/><p>Golden Dawn + RWS + Thoth</p></div>
+              <div><IconCrystalBall size={22}/><p>Celtic Cross 10 ใบ</p></div>
+              <div><IconStar size={22}/><p>AI ตีความเชื่อมดวงดาว</p></div>
             </div>
             <button className="luxury-button" onClick={() => setStep("question")}>
               เปิดไพ่เปิดชะตา
@@ -224,7 +225,7 @@ export default function TarotPage() {
                   className={`premium-choice ${category === c.id ? "selected" : ""}`}
                   onClick={() => setCategory(c.id)}
                 >
-                  <span>{c.emoji}</span>
+                  <span>{c.icon}</span>
                   <small>{c.label}</small>
                 </button>
               ))}

@@ -146,6 +146,50 @@ export function IconTodo({ size = 18, style }: P) {
   );
 }
 
+// ── Trophy / Career ──────────────────────────────────────────────
+export function IconTrophy({ size = 18, style }: P) {
+  return (
+    <svg {...svg(size)} stroke="#fbbf24" style={{ ...svg(size).style, filter: glow("#fbbf24"), ...style }}>
+      <path d="M6 9H4a2 2 0 000 4h2M18 9h2a2 2 0 010 4h-2" />
+      <path d="M6 9V4h12v5a6 6 0 01-12 0z" />
+      <path d="M9 21h6M12 15v6" />
+      <line x1="9" y1="21" x2="15" y2="21" />
+    </svg>
+  );
+}
+
+// ── Balance / Decision ────────────────────────────────────────────
+export function IconBalance({ size = 18, style }: P) {
+  return (
+    <svg {...svg(size)} stroke="#7ee8f8" style={{ ...svg(size).style, filter: glow("#7ee8f8"), ...style }}>
+      <line x1="12" y1="3" x2="12" y2="21" />
+      <path d="M5 21h14M3 9l4-6 4 6M13 9l4-6 4 6" />
+      <path d="M3 9c0 2.2 1.8 4 4 4s4-1.8 4-4M13 9c0 2.2 1.8 4 4 4s4-1.8 4-4" strokeOpacity=".7" />
+    </svg>
+  );
+}
+
+// ── People / Relationship ─────────────────────────────────────────
+export function IconRelationship({ size = 18, style }: P) {
+  return (
+    <svg {...svg(size)} stroke="#f472b6" style={{ ...svg(size).style, filter: glow("#f472b6"), ...style }}>
+      <circle cx="8" cy="7" r="3" />
+      <circle cx="16" cy="7" r="3" />
+      <path d="M2 21v-1a6 6 0 016-6h.5M22 21v-1a6 6 0 00-6-6h-.5" />
+      <path d="M12 13c1.5 0 2.8.5 3.8 1.4" strokeOpacity=".5" />
+    </svg>
+  );
+}
+
+// ── Life / Sparkle ────────────────────────────────────────────────
+export function IconLife({ size = 18, style }: P) {
+  return (
+    <svg {...svg(size)} stroke="#a78bfa" style={{ ...svg(size).style, filter: glow("#a78bfa"), ...style }}>
+      <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+    </svg>
+  );
+}
+
 // ── Tarot Card ────────────────────────────────────────────────────
 export function IconTarotCard({ size = 18, style }: P) {
   return (

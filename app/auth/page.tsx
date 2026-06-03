@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase";
+import { IconGalaxy } from "@/components/AstraIcons";
 import { getZodiacSign } from "@/lib/zodiac";
 import { useRouter } from "next/navigation";
 
@@ -214,7 +215,7 @@ export default function AuthPage() {
 
         {mode === "birth" && (
           <div className="auth-birth-header">
-            <span style={{fontSize:32}}>🌌</span>
+            <span><IconGalaxy size={36}/></span>
             <h3>ข้อมูลเกิดของคุณ</h3>
             <p>ระบบจะสร้างแผนที่ดวงส่วนตัว และจดจำไว้ให้ ไม่ต้องกรอกซ้ำอีก</p>
           </div>
