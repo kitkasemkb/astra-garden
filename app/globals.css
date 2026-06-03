@@ -1239,29 +1239,20 @@ body::before {
 
 /* ── Wheel ───────────────────────────────────────────────────────── */
 .wheel-shell {
-  width: 100%; display: grid; place-items: center; padding: 0;
-  background: radial-gradient(circle, rgba(79,200,255,.05), transparent 60%);
+  width: 100%; display: grid; place-items: center; padding: 8px;
+  background: radial-gradient(circle at 50% 50%, rgba(79,200,255,.07) 0%, transparent 65%);
   border-radius: 20px;
 }
-.astro-wheel { width: min(100%,700px); height: auto; display: block; filter: drop-shadow(0 20px 48px rgba(79,200,255,.08)) }
-.zodiac-outer  { fill: #0e1428; stroke: rgba(79,200,255,.5); stroke-width: 1.5 }
-.zodiac-inner  { fill: #090d1a; stroke: rgba(79,200,255,.2); stroke-width: 1.5 }
-.chart-rim,.inner-guide { fill: none; stroke: rgba(79,200,255,.18); stroke-width: 1.2 }
-.inner-guide.faint { stroke: rgba(79,200,255,.08) }
-.zodiac-cut    { stroke: #0e1428; stroke-width: 1.2 }
-.degree-cut    { stroke: rgba(79,200,255,.15); stroke-width: 1 }
-.axis-line     { stroke: rgba(103,232,249,.5); stroke-width: 1.1 }
-.sign-label    { font-size: 12px; letter-spacing: 2px; fill: rgba(79,200,255,.7); font-weight: 600 }
-.planet-tick   { stroke: var(--star-dim); stroke-width: 1 }
-.planet-dot    { fill: var(--space); stroke: var(--aurora-3); stroke-width: 1.2 }
-.planet-symbol { font-family: var(--serif); font-size: 22px; fill: var(--star) }
-.aspect-line   { stroke-width: 1.1; fill: none; vector-effect: non-scaling-stroke }
-.aspect-line.soft    { stroke: rgba(167,139,250,.45); stroke-dasharray: 7 7 }
-.aspect-line.tense   { stroke: rgba(79,200,255,.55);  stroke-dasharray: 3 4 }
-.aspect-line.neutral { stroke: rgba(103,232,249,.4) }
-.asc-line,.mc-line   { stroke: var(--aurora); stroke-width: 1.3 }
-.mc-line { stroke-dasharray: 9 5 }
-.angle-label { font-size: 9px; letter-spacing: 1.5px; font-weight: 700; fill: var(--aurora) }
+.astro-wheel {
+  width: min(100%,700px); height: auto; display: block;
+  filter: drop-shadow(0 0 40px rgba(79,200,255,.12)) drop-shadow(0 24px 60px rgba(5,8,15,.7));
+  animation: wheelFadeIn .8s ease both;
+}
+@keyframes wheelFadeIn {
+  from { opacity: 0; transform: scale(.96) rotate(-2deg) }
+  to   { opacity: 1; transform: scale(1) rotate(0deg) }
+}
+.planet-symbol { font-family: var(--serif); font-size: 18px; }
 .aspect-legend {
   display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;
   border-top: 1px solid var(--line); padding-top: 12px;
