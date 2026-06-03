@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { createClient } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
+import { IconHistory, IconStar, IconHearts, IconLogout } from "@/components/AstraIcons";
 
 export default function UserMenu() {
   const supabase = createClient();
@@ -67,16 +68,16 @@ export default function UserMenu() {
         <small>{user.email}</small>
       </div>
       <a href="/history" className="user-dropdown-item" onClick={() => setOpen(false)}>
-        📖 ประวัติการดูดวง
+        <IconHistory size={16} /> ประวัติการดูดวง
       </a>
       <a href="/horoscope" className="user-dropdown-item" onClick={() => setOpen(false)}>
-        ⭐ Daily Briefing
+        <IconStar size={16} /> Daily Briefing
       </a>
       <a href="/synastry" className="user-dropdown-item" onClick={() => setOpen(false)}>
-        💞 เปรียบดวงคู่
+        <IconHearts size={16} /> เปรียบดวงคู่
       </a>
       <button className="user-dropdown-item signout" onClick={signOut}>
-        🚪 ออกจากระบบ
+        <IconLogout size={16} /> ออกจากระบบ
       </button>
     </div>,
     document.body

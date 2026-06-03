@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AspectLegend, AstrologyWheel, DecorativeWheel } from "@/components/AstrologyWheel";
+import { IconCrystalBall, IconTarotCard } from "@/components/AstraIcons";
 import { createClient } from "@/lib/supabase";
 import UserMenu from "@/components/UserMenu";
 
@@ -458,9 +459,9 @@ export default function HomePage() {
         <div className="topbar-right">
           <div className="topbar-meta">
             <span>Personal reading</span>
-            <a href="/tarot" className="topbar-tarot-btn">🔮 ไพ่ทาโร่</a>
+            <a href="/tarot" className="topbar-tarot-btn"><IconCrystalBall size={15}/> ไพ่ทาโร่</a>
           </div>
-          <a href="/tarot" className="topbar-tarot-mobile">🔮</a>
+          <a href="/tarot" className="topbar-tarot-mobile"><IconCrystalBall size={18}/></a>
           <UserMenu />
         </div>
       </header>
@@ -503,8 +504,8 @@ export default function HomePage() {
               <span className="kicker">✦ Golden Dawn · Rider-Waite · Thoth</span>
               <h2>ไพ่ทาโร่<br /><em>เปิดเผยชะตาชีวิต</em></h2>
               <p>Celtic Cross 10 ใบ อ่านทุกมิติพร้อม AI ตีความ</p>
-              <a href="/tarot" className="luxury-button" style={{ textDecoration:"none", display:"inline-flex", marginTop:16 }}>
-                🔮 เปิดไพ่เปิดชะตา
+              <a href="/tarot" className="luxury-button" style={{ textDecoration:"none", display:"inline-flex", alignItems:"center", gap:8, marginTop:16 }}>
+                <IconCrystalBall size={16}/> เปิดไพ่เปิดชะตา
               </a>
             </div>
             <div className="tarot-banner-cards">

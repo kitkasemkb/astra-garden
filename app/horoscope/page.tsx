@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import UserMenu from "@/components/UserMenu";
 import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { IconSun, IconHearts, IconWork, IconMoney, IconHealth, IconTodo, IconGalaxy } from "@/components/AstraIcons";
 
 type TransitAspect = {
   transitPlanet: string;
@@ -116,14 +117,14 @@ export default function DailyBriefingPage() {
     return acc;
   }, []);
 
-  const SECTION_ICONS: Record<string, string> = {
-    "พลังงานวันนี้": "☀️",
-    "ความรักและความสัมพันธ์": "💞",
-    "การงานและโอกาส": "💼",
-    "การเงิน": "💰",
-    "สุขภาพและพลังงาน": "🌿",
-    "สิ่งที่ควรทำวันนี้": "✦",
-    "ข้อความจากดวงดาว": "🌌",
+  const SECTION_ICONS: Record<string, React.ReactNode> = {
+    "พลังงานวันนี้":          <IconSun size={28} />,
+    "ความรักและความสัมพันธ์": <IconHearts size={28} />,
+    "การงานและโอกาส":         <IconWork size={28} />,
+    "การเงิน":                <IconMoney size={28} />,
+    "สุขภาพและพลังงาน":       <IconHealth size={28} />,
+    "สิ่งที่ควรทำวันนี้":     <IconTodo size={28} />,
+    "ข้อความจากดวงดาว":       <IconGalaxy size={28} />,
   };
 
   return (
@@ -209,7 +210,7 @@ export default function DailyBriefingPage() {
           <div className="briefing-grid">
             {sections.map((sec, i) => (
               <div key={i} className={`briefing-card ${i === 0 ? "briefing-card-wide" : ""}`}>
-                <div className="briefing-card-icon">{SECTION_ICONS[sec.title] ?? "✦"}</div>
+                <div className="briefing-card-icon">{SECTION_ICONS[sec.title] ?? <IconSun size={28}/>}</div>
                 <h3 className="briefing-card-title">{sec.title}</h3>
                 {sec.body.map((line, j) => <p key={j}>{line}</p>)}
               </div>

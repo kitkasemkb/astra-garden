@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect } from "react";
 import UserMenu from "@/components/UserMenu";
 import { createClient } from "@/lib/supabase";
+import { IconMoon, IconSun, IconHearts } from "@/components/AstraIcons";
 
 const MONTHS_TH = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
 const DAYS    = Array.from({length:31},(_,i)=>i+1);
@@ -13,7 +14,7 @@ type PersonData = { name:string; yearBE:string; month:string; day:string; hour:s
 const emptyPerson = (): PersonData => ({ name:"", yearBE:"", month:"", day:"", hour:"", minute:"0" });
 
 function BirthForm({ label, emoji, data, onChange, locked }: {
-  label: string; emoji: string; data: PersonData; onChange: (d: PersonData) => void; locked?: boolean;
+  label: string; emoji: React.ReactNode; data: PersonData; onChange: (d: PersonData) => void; locked?: boolean;
 }) {
   const set = (k: keyof PersonData) => (e: React.ChangeEvent<HTMLSelectElement|HTMLInputElement>) =>
     onChange({ ...data, [k]: e.target.value });
@@ -181,7 +182,7 @@ export default function SynastryPage() {
         </div>
 
         <div className="synastry-forms">
-          <BirthForm label="คุณ" emoji="🌙" data={personA} onChange={setPersonA} locked={profileLoaded} />
+          <BirthForm label="คุณ" emoji={<IconMoon size={28}/>} data={personA} onChange={setPersonA} locked={profileLoaded} />
           {profileLoaded && (
             <div style={{ textAlign:"center" }}>
               <button
@@ -193,8 +194,8 @@ export default function SynastryPage() {
               </button>
             </div>
           )}
-          <div className="synastry-vs">💞</div>
-          <BirthForm label="อีกคน" emoji="☀️" data={personB} onChange={setPersonB} />
+          <div className="synastry-vs"><IconHearts size={36}/></div>
+          <BirthForm label="อีกคน" emoji={<IconSun size={28}/>} data={personB} onChange={setPersonB} />
         </div>
 
         <div style={{textAlign:"center", marginTop:24}}>
