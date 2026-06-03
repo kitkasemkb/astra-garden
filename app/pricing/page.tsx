@@ -47,18 +47,46 @@ export default function PricingPage() {
   async function handleUpgrade() {
     if (!loggedIn) { window.location.href = "/auth"; return; }
     setLoading(true);
-    const res = await fetch("/api/stripe/checkout", { method: "POST" });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-    else { setMessage(data.error || "Error"); setLoading(false); }
+    setMessage("");
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      const res = await fetch("/api/stripe/checkout", { method: "POST", signal: controller.signal });
+      clearTimeout(timeout);
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setMessage(lang === "th"
+          ? `เกิดข้อผิดพลาด: ${data.error || "กรุณาลองใหม่"}`
+          : `Error: ${data.error || "Please try again"}`);
+        setLoading(false);
+      }
+    } catch (e) {
+      const isTimeout = e instanceof Error && e.name === "AbortError";
+      setMessage(lang === "th"
+        ? isTimeout ? "หมดเวลาเชื่อมต่อ กรุณาลองใหม่" : "เชื่อมต่อไม่สำเร็จ กรุณาลองใหม่"
+        : isTimeout ? "Request timed out. Please try again." : "Connection failed. Please try again.");
+      setLoading(false);
+    }
   }
 
   async function handlePortal() {
     setLoading(true);
-    const res = await fetch("/api/stripe/portal", { method: "POST" });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-    else { setMessage(data.error || "Error"); setLoading(false); }
+    setMessage("");
+    try {
+      const res = await fetch("/api/stripe/portal", { method: "POST" });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setMessage(data.error || "Error");
+        setLoading(false);
+      }
+    } catch {
+      setMessage(lang === "th" ? "เชื่อมต่อไม่สำเร็จ กรุณาลองใหม่" : "Connection failed. Please try again.");
+      setLoading(false);
+    }
   }
 
   return (
@@ -79,7 +107,12 @@ export default function PricingPage() {
           <div className="kicker">Plans</div>
           <h1 style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", marginBottom: 12 }}>{t("pricing.title")}</h1>
           {message && (
-            <div className="auth-message" style={{ display: "inline-block", marginTop: 8 }}>{message}</div>
+            <div className="auth-message" style={{
+              display: "inline-block", marginTop: 8, padding: "10px 20px",
+              background: message.includes("สำเร็จ") || message.includes("successful") ? "rgba(93,207,255,.1)" : "rgba(255,100,100,.1)",
+              border: `1px solid ${message.includes("สำเร็จ") || message.includes("successful") ? "var(--aurora)" : "rgba(255,100,100,.4)"}`,
+              borderRadius: 10, color: "var(--star-mid)", fontSize: 14
+            }}>{message}</div>
           )}
         </div>
 
