@@ -14,7 +14,7 @@ export const PLANS = {
     name: "Pro",
     nameTH: "โปร",
     readingsPerMonth: Infinity,
-    price: 299,
+    price: 149,
     priceUSD: 9,
     stripePriceId: process.env.STRIPE_PRICE_PRO_MONTHLY || "",
   },

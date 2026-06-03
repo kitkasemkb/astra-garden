@@ -69,7 +69,7 @@ export const translations = {
     "pricing.free": "ฟรี",
     "pricing.pro": "Pro",
     "pricing.freePrice": "฿0/เดือน",
-    "pricing.proPrice": "฿299/เดือน",
+    "pricing.proPrice": "฿149/เดือน",
     "pricing.feature.readings3": "3 ครั้ง/เดือน",
     "pricing.feature.readingsUnlimited": "ไม่จำกัดจำนวนครั้ง",
     "pricing.feature.birthChart": "แผนที่ดวงกำเนิด",

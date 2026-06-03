@@ -257,7 +257,7 @@ export default function OnboardingPage() {
               <div className="pricing-card pricing-card-pro" style={{ padding: 20 }}>
                 <div style={{ fontWeight: 700, marginBottom: 8 }}>Pro</div>
                 <div style={{ fontSize: "1.4rem", fontWeight: 600, marginBottom: 12 }}>
-                  {lang === "th" ? "฿299/เดือน" : "$9/mo"}
+                  {lang === "th" ? "฿149/เดือน" : "$9/mo"}
                 </div>
                 <ul className="pricing-features" style={{ fontSize: 13 }}>
                   <li><span className="pricing-check">✦</span>{t("pricing.feature.readingsUnlimited")}</li>
