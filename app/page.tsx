@@ -2,9 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AspectLegend, AstrologyWheel, DecorativeWheel } from "@/components/AstrologyWheel";
-import { IconCrystalBall, IconTarotCard } from "@/components/AstraIcons";
+import { IconCrystalBall } from "@/components/AstraIcons";
 import { createClient } from "@/lib/supabase";
 import UserMenu from "@/components/UserMenu";
+import LangToggle from "@/components/LangToggle";
+import { useLang } from "@/components/LangProvider";
 
 type Chart = {
   ascendant: { longitude: number; sign: string; degreeInSign: number };
@@ -211,6 +213,7 @@ const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const MINUTES = Array.from({ length: 60 }, (_, i) => i); // ทุก 1 นาที
 
 export default function HomePage() {
+  const { t } = useLang();
   const [step, setStep] = useState<WizardStep>(0);
   const [category, setCategory] = useState("business");
   const [advisorTone, setAdvisorTone] = useState("gentle");
@@ -289,7 +292,7 @@ export default function HomePage() {
     () => tones.find((x) => x.id === advisorTone) || tones[0],
     [advisorTone],
   );
-  const sections = answer ? parseSections(answer) : [];
+  const sections = (answer && answer !== "__LIMIT_REACHED__") ? parseSections(answer) : [];
 
   function chooseProvince(value: string) {
     const p = provincePresets.find((x) => x.name === value);
@@ -333,7 +336,12 @@ export default function HomePage() {
 
       if (!res.ok || !res.body) {
         const data = await res.json();
-        setAnswer(data.error || "เกิดข้อผิดพลาด");
+        if (data.error === "LIMIT_REACHED") {
+          setAnswer("__LIMIT_REACHED__");
+        } else {
+          setAnswer(data.error || "เกิดข้อผิดพลาด");
+        }
+        setLoading(false);
         return;
       }
 
@@ -458,8 +466,8 @@ export default function HomePage() {
         </button>
         <div className="topbar-right">
           <div className="topbar-meta">
-            <span>Personal reading</span>
-            <a href="/tarot" className="topbar-tarot-btn"><IconCrystalBall size={15}/> ไพ่ทาโร่</a>
+            <span>{t("nav.personalReading")}</span>
+            <a href="/tarot" className="topbar-tarot-btn"><IconCrystalBall size={15}/> {t("nav.tarot")}</a>
           </div>
           <a href="/tarot" className="topbar-tarot-mobile"><IconCrystalBall size={18}/></a>
           <UserMenu />
@@ -801,6 +809,18 @@ export default function HomePage() {
                       ระบบกำลังเชื่อมข้อมูลดวงกับบริบทชีวิตจริง
                       เพื่อให้คำตอบไม่แข็งเป็นสูตรสำเร็จ
                     </p>
+                  </div>
+                )}
+
+                {!loading && answer === "__LIMIT_REACHED__" && (
+                  <div className="limit-banner">
+                    <span style={{ fontSize: 36 }}>✦</span>
+                    <h3>{t("limit.title")}</h3>
+                    <p>{t("limit.desc")}</p>
+                    <a href="/pricing" className="luxury-button" style={{ textDecoration: "none", marginTop: 8 }}>
+                      {t("limit.cta")}
+                    </a>
+                    <small>{t("limit.resets")}</small>
                   </div>
                 )}
 

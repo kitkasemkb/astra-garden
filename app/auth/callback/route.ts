@@ -23,10 +23,10 @@ export async function GET(req: NextRequest) {
 
     const { data } = await supabase.auth.exchangeCodeForSession(code);
 
-    // ถ้า login ผ่าน Google และยังไม่มีข้อมูลเกิด → ไปกรอกก่อน
+    // New users (no onboarding yet) → send to onboarding wizard
     const meta = data.session?.user?.user_metadata;
-    if (data.session && !meta?.birth_year_be) {
-      return NextResponse.redirect(`${origin}/auth/birth`);
+    if (data.session && !meta?.onboarding_done) {
+      return NextResponse.redirect(`${origin}/onboarding`);
     }
   }
 

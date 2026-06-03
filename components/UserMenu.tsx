@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { createClient } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import { IconHistory, IconStar, IconHearts, IconLogout } from "@/components/AstraIcons";
+import LangToggle from "@/components/LangToggle";
 
 export default function UserMenu() {
   const supabase = createClient();
@@ -52,10 +53,16 @@ export default function UserMenu() {
   }
 
   if (!user) {
-    return <a href="/auth" className="user-login-btn">เข้าสู่ระบบ</a>;
+    return (
+      <>
+        <LangToggle />
+        <a href="/auth" className="user-login-btn">เข้าสู่ระบบ</a>
+      </>
+    );
   }
 
   const initial = (user.user_metadata?.display_name || user.email || "?")[0].toUpperCase();
+  const isPro = user.user_metadata?.subscription_tier === "pro";
 
   const dropdown = open && mounted ? createPortal(
     <div
@@ -66,7 +73,11 @@ export default function UserMenu() {
       <div className="user-dropdown-info">
         <strong>{user.user_metadata?.display_name || "สมาชิก"}</strong>
         <small>{user.email}</small>
+        {isPro && <span className="user-pro-badge">PRO</span>}
       </div>
+      <a href="/pricing" className="user-dropdown-item" onClick={() => setOpen(false)}>
+        <IconStar size={16} /> {isPro ? "จัดการแผน" : "อัปเกรด Pro"}
+      </a>
       <a href="/history" className="user-dropdown-item" onClick={() => setOpen(false)}>
         <IconHistory size={16} /> ประวัติการดูดวง
       </a>
@@ -84,7 +95,9 @@ export default function UserMenu() {
   ) : null;
 
   return (
-    <div className="user-menu-wrap" ref={ref}>
+    <div className="user-menu-wrap" ref={ref} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <LangToggle />
+      {isPro && <span className="user-pro-badge-inline">PRO</span>}
       <button className="user-avatar-btn" ref={btnRef} onClick={toggleOpen} title={user.email}>
         {user.user_metadata?.avatar_url
           ? <img src={user.user_metadata.avatar_url} alt="" className="user-avatar-img" />

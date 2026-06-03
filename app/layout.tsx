@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Sarabun } from "next/font/google";
+import { LangProvider } from "@/components/LangProvider";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -23,7 +24,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="th" className={`${cormorant.variable} ${sarabun.variable}`}>
-      <body>{children}</body>
+      <body>
+        <LangProvider>{children}</LangProvider>
+      </body>
     </html>
   );
 }

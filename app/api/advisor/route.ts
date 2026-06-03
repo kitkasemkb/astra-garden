@@ -6,6 +6,8 @@ import OpenAI from "openai";
 import { calculateChart } from "@/lib/astrology";
 import { buildAdvisorPrompt } from "@/lib/advisorPrompt";
 import { calculateTransits, formatTransitForPrompt } from "@/lib/transit";
+import { createClient } from "@/lib/supabase-server";
+import { PLANS } from "@/lib/stripe";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -26,6 +28,32 @@ export async function POST(req: NextRequest) {
     if (!topic || !birthDate || !birthTime) {
       return new Response(JSON.stringify({ error: "กรุณากรอกเรื่องที่ปรึกษา วันเกิด และเวลาเกิด" }), { status: 400 });
     }
+
+    // Reading limit check for Free tier
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const tier = session.user.user_metadata?.subscription_tier ?? "free";
+        if (tier !== "pro") {
+          const now = new Date();
+          const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+          const { count } = await supabase
+            .from("readings")
+            .select("id", { count: "exact", head: true })
+            .eq("user_id", session.user.id)
+            .eq("type", "astrology")
+            .gte("created_at", monthStart);
+          if ((count ?? 0) >= PLANS.free.readingsPerMonth) {
+            return new Response(
+              JSON.stringify({ error: "LIMIT_REACHED" }),
+              { status: 403 }
+            );
+          }
+        }
+      }
+    } catch {}
+    // ── end limit check ──
 
     const chart = await calculateChart({
       birthDate,
