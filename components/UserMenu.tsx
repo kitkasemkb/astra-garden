@@ -7,7 +7,9 @@ export default function UserMenu() {
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
   const [open, setOpen] = useState(false);
+  const [dropPos, setDropPos] = useState({ top: 0, right: 0 });
   const ref = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
@@ -24,6 +26,14 @@ export default function UserMenu() {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  function toggleOpen() {
+    if (!open && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setDropPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
+    }
+    setOpen(o => !o);
+  }
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -43,14 +53,14 @@ export default function UserMenu() {
 
   return (
     <div className="user-menu-wrap" ref={ref}>
-      <button className="user-avatar-btn" onClick={() => setOpen(!open)} title={user.email}>
+      <button className="user-avatar-btn" ref={btnRef} onClick={toggleOpen} title={user.email}>
         {user.user_metadata?.avatar_url
           ? <img src={user.user_metadata.avatar_url} alt="" className="user-avatar-img" />
           : <span>{initial}</span>
         }
       </button>
       {open && (
-        <div className="user-dropdown">
+        <div className="user-dropdown" style={{ position:"fixed", top: dropPos.top, right: dropPos.right }}>
           <div className="user-dropdown-info">
             <strong>{user.user_metadata?.display_name || "สมาชิก"}</strong>
             <small>{user.email}</small>
