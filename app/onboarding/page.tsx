@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase";
 import { useLang } from "@/components/LangProvider";
 import { getZodiacSign } from "@/lib/zodiac";
 import { LANG_OPTIONS, type Lang } from "@/lib/i18n";
+import BirthLocationPicker from "@/components/BirthLocationPicker";
 
 const MONTHS_TH = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
 const MONTHS_EN = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -110,6 +111,10 @@ export default function OnboardingPage() {
   const [hour, setHour] = useState("");
   const [minute, setMinute] = useState("0");
   const [province, setProvince] = useState("กรุงเทพมหานคร");
+  const [birthCountry, setBirthCountry] = useState("Thailand");
+  const [birthCity, setBirthCity] = useState("");
+  const [lat, setLat] = useState(13.7563);
+  const [lon, setLon] = useState(100.5018);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -143,8 +148,8 @@ export default function OnboardingPage() {
       const yearCE = lang === "th" ? yearNum - 543 : yearNum;
       const birthDate = `${yearCE}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
       const birthTime = `${String(hour).padStart(2,"0")}:${String(minute).padStart(2,"0")}`;
-      const prov = PROVINCES.find(p => p.name === province) || PROVINCES[0];
       const zodiac = getZodiacSign(Number(month), Number(day));
+      const locationLabel = birthCountry === "Thailand" ? province : `${birthCity}, ${birthCountry}`;
 
       const { error: err } = await supabase.auth.updateUser({
         data: {
@@ -152,8 +157,10 @@ export default function OnboardingPage() {
           birth_date: birthDate, birth_time: birthTime,
           birth_year_be: yearBE, birth_month: Number(month),
           birth_day: Number(day), birth_hour: Number(hour),
-          birth_minute: Number(minute), province,
-          latitude: prov.lat, longitude: prov.lon,
+          birth_minute: Number(minute),
+          province: locationLabel,
+          latitude: lat, longitude: lon,
+          birth_country: birthCountry, birth_city: birthCity,
           zodiac_sign: zodiac,
           preferred_lang: selectedLang,
         },
@@ -283,12 +290,18 @@ export default function OnboardingPage() {
                   </select>
                 </label>
               </div>
-              <label className="lux-field">
-                <span>{t("birth.province")}</span>
-                <select value={province} onChange={e => setProvince(e.target.value)}>
-                  {PROVINCES.map(p => <option key={p.name}>{p.name}</option>)}
-                </select>
-              </label>
+              <BirthLocationPicker
+                country={birthCountry}
+                province={province}
+                city={birthCity}
+                lat={lat}
+                lon={lon}
+                onChangeCountry={setBirthCountry}
+                onChangeProvince={setProvince}
+                onChangeCity={setBirthCity}
+                onChangeLat={setLat}
+                onChangeLon={setLon}
+              />
             </div>
             {error && <div className="auth-message err">{error}</div>}
             <div style={{ display: "flex", gap: 12, marginTop: 20 }}>

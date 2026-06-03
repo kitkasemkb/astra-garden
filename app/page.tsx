@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase";
 import UserMenu from "@/components/UserMenu";
 import LangToggle from "@/components/LangToggle";
 import { useLang } from "@/components/LangProvider";
+import BirthLocationPicker from "@/components/BirthLocationPicker";
 
 type Chart = {
   ascendant: { longitude: number; sign: string; degreeInSign: number };
@@ -237,9 +238,9 @@ export default function HomePage() {
   const [timezoneOffset, setTimezoneOffset] = useState(7);
   const [latitude, setLatitude] = useState(13.7563);
   const [longitude, setLongitude] = useState(100.5018);
-  const [selectedProvince, setSelectedProvince] = useState(
-    provincePresets[0].name,
-  );
+  const [selectedProvince, setSelectedProvince] = useState(provincePresets[0].name);
+  const [birthCountry, setBirthCountry] = useState("Thailand");
+  const [birthCity, setBirthCity] = useState("");
   const [answer, setAnswer] = useState("");
   const [chart, setChart] = useState<Chart | null>(null);
   const [loading, setLoading] = useState(false);
@@ -605,49 +606,27 @@ export default function HomePage() {
                   </small>
                 </div>
 
-                <label className="lux-field">
-                  <span>{t("birth.province")}</span>
-                  <select
-                    value={selectedProvince}
-                    onChange={(e) => chooseProvince(e.target.value)}
-                  >
-                    {provincePresets.map((p) => (
-                      <option key={p.name}>{p.name}</option>
-                    ))}
-                  </select>
-                  <small>{t("page.birthNote")}</small>
-                </label>
+                <BirthLocationPicker
+                  country={birthCountry}
+                  province={selectedProvince}
+                  city={birthCity}
+                  lat={latitude}
+                  lon={longitude}
+                  onChangeCountry={setBirthCountry}
+                  onChangeProvince={setSelectedProvince}
+                  onChangeCity={setBirthCity}
+                  onChangeLat={setLatitude}
+                  onChangeLon={setLongitude}
+                />
 
-                <div className="geo-grid">
-                  <label className="lux-field compact-field">
-                    <span>Timezone</span>
-                    <input
-                      type="number"
-                      value={timezoneOffset}
-                      onChange={(e) =>
-                        setTimezoneOffset(Number(e.target.value))
-                      }
-                    />
-                  </label>
-                  <label className="lux-field compact-field">
-                    <span>Latitude</span>
-                    <input
-                      type="number"
-                      step="0.0001"
-                      value={latitude}
-                      onChange={(e) => setLatitude(Number(e.target.value))}
-                    />
-                  </label>
-                  <label className="lux-field compact-field">
-                    <span>Longitude</span>
-                    <input
-                      type="number"
-                      step="0.0001"
-                      value={longitude}
-                      onChange={(e) => setLongitude(Number(e.target.value))}
-                    />
-                  </label>
-                </div>
+                <label className="lux-field compact-field" style={{ maxWidth: 120 }}>
+                  <span>Timezone (UTC+)</span>
+                  <input
+                    type="number"
+                    value={timezoneOffset}
+                    onChange={e => setTimezoneOffset(Number(e.target.value))}
+                  />
+                </label>
 
                 <div className="tone-suite">
                   <div>
