@@ -481,6 +481,14 @@ export default function HomePage() {
             <p className="landing-action-hint">อ่านแบบผ่อนคลาย ใช้เป็นมุมมองประกอบ ไม่ใช่คำตัดสินแทนคุณ</p>
           </div>
 
+          {/* Mobile wheel — shows only on mobile between copy and tarot banner */}
+          <div className="mobile-wheel-section" aria-hidden="true">
+            <div className="mobile-wheel-inner">
+              <DecorativeWheel />
+            </div>
+            <div className="mobile-wheel-fade" />
+          </div>
+
           <div className="hero-art" aria-hidden="true">
             <div className="floating-orb orb-one">☉</div>
             <div className="floating-orb orb-two">☾</div>

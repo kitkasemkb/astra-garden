@@ -247,6 +247,33 @@ body::before {
   from { transform: rotate(0deg) }
   to   { transform: rotate(360deg) }
 }
+
+/* Mobile wheel section — hidden on desktop, visible on mobile */
+.mobile-wheel-section {
+  display: none;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  height: 56vw;
+  margin: 8px 0 24px;
+}
+.mobile-wheel-inner {
+  position: absolute;
+  left: 50%; top: 0;
+  width: 110vw;
+  transform: translateX(-50%);
+}
+.mobile-wheel-fade {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 50%,
+    rgba(9,13,26,.7) 80%,
+    var(--space) 100%
+  );
+  pointer-events: none;
+}
 .art-note { right: 12px; bottom: 54px; width: 232px; padding: 18px; border-radius: 18px }
 .art-note small,.art-list span {
   display: block; color: var(--star-dim); font-size: 10px;
@@ -1328,6 +1355,7 @@ body::before {
   .landing-actions .luxury-button { width: 100%; justify-content: center; padding: 14px 16px; font-size: 13px }
   .landing-actions span { font-size: 11px; max-width: none; text-align: center; width: 100% }
   .hero-art,.learning-strip { display: none }
+  .mobile-wheel-section { display: block }
 
   .session-layout { display: block; margin-top: 4px }
   .session-rail { display: none }
