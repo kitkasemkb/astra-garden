@@ -19,7 +19,7 @@ export function LangProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const stored = localStorage.getItem("astra_lang") as Lang | null;
-    if (stored === "th" || stored === "en") setLangState(stored);
+    if (stored === "th" || stored === "en" || stored === "zh") setLangState(stored);
   }, []);
 
   function setLang(l: Lang) {

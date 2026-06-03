@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { useLang } from "@/components/LangProvider";
 import { getZodiacSign } from "@/lib/zodiac";
-import type { Lang } from "@/lib/i18n";
+import { LANG_OPTIONS, type Lang } from "@/lib/i18n";
 
 const MONTHS_TH = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
 const MONTHS_EN = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -215,13 +215,22 @@ export default function OnboardingPage() {
                 placeholder={t("onboarding.namePlaceholder")}
               />
             </label>
-            <label className="lux-field" style={{ marginBottom: 24 }}>
-              <span>{t("onboarding.langLabel")}</span>
-              <select value={selectedLang} onChange={e => { const l = e.target.value as Lang; setSelectedLang(l); setLang(l); }}>
-                <option value="th">ภาษาไทย</option>
-                <option value="en">English</option>
-              </select>
-            </label>
+            <div style={{ marginBottom: 24 }}>
+              <span className="lux-field" style={{ display: "block", marginBottom: 10 }}>
+                <span>{t("onboarding.langLabel")}</span>
+              </span>
+              <div className="lang-pill-group" style={{ display: "inline-flex" }}>
+                {LANG_OPTIONS.map(opt => (
+                  <button
+                    key={opt.value}
+                    className={`lang-pill ${selectedLang === opt.value ? "active" : ""}`}
+                    onClick={() => { setSelectedLang(opt.value); setLang(opt.value); }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
             <button className="luxury-button auth-submit" onClick={nextStep}>
               {t("btn.next")} →
             </button>
@@ -311,7 +320,7 @@ export default function OnboardingPage() {
               <div className="pricing-card" style={{ padding: 20 }}>
                 <div style={{ fontWeight: 700, marginBottom: 8 }}>Free</div>
                 <div style={{ fontSize: "1.4rem", fontWeight: 600, marginBottom: 12 }}>
-                  {lang === "th" ? "฿0" : "$0"}
+                  {lang === "th" ? "฿0" : lang === "zh" ? "¥0" : "$0"}
                 </div>
                 <ul className="pricing-features" style={{ fontSize: 13 }}>
                   <li><span className="pricing-check">✦</span>{t("pricing.feature.readings3")}</li>
@@ -322,7 +331,7 @@ export default function OnboardingPage() {
               <div className="pricing-card pricing-card-pro" style={{ padding: 20 }}>
                 <div style={{ fontWeight: 700, marginBottom: 8 }}>Pro</div>
                 <div style={{ fontSize: "1.4rem", fontWeight: 600, marginBottom: 12 }}>
-                  {lang === "th" ? "฿149/เดือน" : "$9/mo"}
+                  {lang === "th" ? "฿149/เดือน" : lang === "zh" ? "¥29/月" : "$9/mo"}
                 </div>
                 <ul className="pricing-features" style={{ fontSize: 13 }}>
                   <li><span className="pricing-check">✦</span>{t("pricing.feature.readingsUnlimited")}</li>

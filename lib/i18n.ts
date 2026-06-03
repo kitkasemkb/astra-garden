@@ -1,4 +1,4 @@
-export type Lang = "th" | "en";
+export type Lang = "th" | "en" | "zh";
 
 export const translations = {
   th: {
@@ -195,6 +195,109 @@ export const translations = {
     "onboarding.progress": "Step",
     "onboarding.of": "of",
   },
+  zh: {
+    // Nav / Header
+    "nav.personalReading": "个人解读",
+    "nav.tarot": "塔罗牌",
+    "nav.login": "登录",
+    "nav.history": "解读历史",
+    "nav.dailyBriefing": "每日简报",
+    "nav.compareChart": "星盘配对",
+    "nav.logout": "退出登录",
+    "nav.pricing": "套餐价格",
+    "nav.upgradePro": "升级 Pro",
+    "nav.managePlan": "管理套餐",
+    // Landing
+    "landing.kicker": "V7 星园体验",
+    "landing.title": "静静聆听生命节奏的空间",
+    "landing.desc": "输入您的问题与出生数据，系统将计算星盘，并将占星视角转化为清晰温柔的人生建议。",
+    "landing.cta": "开始我的解读",
+    "landing.hint": "作为参考视角，而非最终定论。",
+    "landing.feature1Title": "出生星盘",
+    "landing.feature1Desc": "从出生数据揭示核心自我、上升星座与生命节奏。",
+    "landing.feature2Title": "人生问题",
+    "landing.feature2Desc": "将星盘与您正在面对的真实决策相连接。",
+    "landing.feature3Title": "简明建议",
+    "landing.feature3Desc": "无绝对预言，只有温柔的视角帮助您思考。",
+    // Wizard steps
+    "step.start": "开始",
+    "step.birth": "出生数据",
+    "step.question": "提问",
+    "step.context": "背景",
+    "step.report": "报告",
+    // Birth panel
+    "birth.title": "出生数据（用于生成星盘）",
+    "birth.loaded": "✅ 已从档案加载出生数据，可直接继续。",
+    "birth.fillIn": "出生日期和时间是星盘的基础，请准确填写。",
+    "birth.edit": "修改",
+    "birth.day": "日",
+    "birth.month": "月",
+    "birth.year": "年（公历）",
+    "birth.hour": "出生时辰",
+    "birth.minute": "出生分钟",
+    "birth.province": "出生省份 / 地点",
+    // Buttons
+    "btn.next": "继续",
+    "btn.back": "返回",
+    "btn.reread": "重新解读",
+    "btn.calculate": "计算星盘并解读",
+    "btn.share": "分享解读",
+    // Result
+    "result.preparing": "正在准备星盘",
+    "result.calculating": "正在计算星盘…",
+    "result.calcDesc": "系统正在将星盘与您的生活背景相连接，为您生成个性化解读。",
+    "result.ready": "准备就绪",
+    "result.readyTitle": "您的个人报告已准备好",
+    "result.readyDesc": "系统将计算出生星盘，并由 AI 将其解读为易于理解的建议。",
+    "result.reportTitle": "基于您的星盘与背景的建议",
+    "result.reportDesc": "请将此作为参考视角，结合实际情况做出决策。",
+    // Limit
+    "limit.title": "本月额度已用完",
+    "limit.desc": "免费套餐每月可解读 3 次，升级 Pro 可无限次解读。",
+    "limit.cta": "升级 Pro",
+    "limit.resets": "额度将在下月初重置。",
+    // Footer
+    "footer.disclaimer": "本解读基于占星学视角及您提供的信息，仅供参考，不代表对未来的保证，亦非法律、医疗或财务方面的专业建议。",
+    // Pricing
+    "pricing.title": "选择适合您的套餐",
+    "pricing.free": "免费",
+    "pricing.pro": "Pro",
+    "pricing.freePrice": "¥0/月",
+    "pricing.proPrice": "¥29/月",
+    "pricing.feature.readings3": "每月 3 次解读",
+    "pricing.feature.readingsUnlimited": "无限次解读",
+    "pricing.feature.birthChart": "出生星盘",
+    "pricing.feature.tarot": "塔罗牌解读",
+    "pricing.feature.history": "解读历史",
+    "pricing.feature.synastry": "星盘配对",
+    "pricing.feature.priority": "优先处理",
+    "pricing.freeCta": "免费开始",
+    "pricing.proCta": "升级 Pro",
+    "pricing.currentPlan": "当前套餐",
+    "pricing.managePlan": "管理套餐",
+    // Onboarding
+    "onboarding.step1Title": "欢迎来到星园",
+    "onboarding.step1Desc": "让我们设置您的档案，准备好开始使用。",
+    "onboarding.step2Title": "出生数据",
+    "onboarding.step2Desc": "用于生成您的个人星盘，系统将记住，无需重复填写。",
+    "onboarding.step3Title": "选择套餐",
+    "onboarding.step3Desc": "现在免费开始，随时可升级。",
+    "onboarding.namePlaceholder": "您的姓名",
+    "onboarding.nameLabel": "姓名（将显示在报告中）",
+    "onboarding.langLabel": "首选语言",
+    "onboarding.saveBirth": "保存出生数据 →",
+    "onboarding.saving": "保存中…",
+    "onboarding.skip": "暂时跳过",
+    "onboarding.startFree": "免费开始 →",
+    "onboarding.progress": "第",
+    "onboarding.of": "步，共 3 步",
+  },
 } satisfies Record<Lang, Record<string, string>>;
+
+export const LANG_OPTIONS: { value: Lang; label: string }[] = [
+  { value: "th", label: "ไทย" },
+  { value: "en", label: "EN" },
+  { value: "zh", label: "中文" },
+];
 
 export type TranslationKey = keyof typeof translations.th;

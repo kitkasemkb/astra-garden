@@ -1446,20 +1446,35 @@ body::after {
   .legal-line { margin-top: 12px; padding: 0 4px; font-size: 10px; line-height: 1.5 }
 }
 
-/* ── Language Toggle ─────────────────────────────────────────────── */
-.lang-toggle {
-  background: transparent;
+/* ── Language Pill Group ─────────────────────────────────────────── */
+.lang-pill-group {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,.04);
   border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 2px;
+  gap: 2px;
+}
+.lang-pill {
+  background: transparent;
+  border: none;
   color: var(--star-dim);
   font-size: 11px;
   font-family: var(--sans);
-  letter-spacing: .08em;
-  padding: 4px 10px;
-  border-radius: 20px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  padding: 4px 11px;
+  border-radius: 16px;
   cursor: pointer;
-  transition: border-color .2s, color .2s;
+  transition: background .2s, color .2s;
+  white-space: nowrap;
 }
-.lang-toggle:hover { border-color: var(--aurora); color: var(--aurora); }
+.lang-pill:hover { color: var(--star); }
+.lang-pill.active {
+  background: linear-gradient(135deg, var(--aurora), var(--aurora-2));
+  color: var(--void);
+}
 
 /* ── Pro badge ───────────────────────────────────────────────────── */
 .user-pro-badge {

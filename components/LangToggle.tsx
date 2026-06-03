@@ -1,15 +1,21 @@
 "use client";
 import { useLang } from "@/components/LangProvider";
+import { LANG_OPTIONS } from "@/lib/i18n";
 
 export default function LangToggle() {
   const { lang, setLang } = useLang();
   return (
-    <button
-      className="lang-toggle"
-      onClick={() => setLang(lang === "th" ? "en" : "th")}
-      title={lang === "th" ? "Switch to English" : "เปลี่ยนเป็นภาษาไทย"}
-    >
-      {lang === "th" ? "EN" : "TH"}
-    </button>
+    <div className="lang-pill-group" role="group" aria-label="Language">
+      {LANG_OPTIONS.map(opt => (
+        <button
+          key={opt.value}
+          className={`lang-pill ${lang === opt.value ? "active" : ""}`}
+          onClick={() => setLang(opt.value)}
+          aria-pressed={lang === opt.value}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
   );
 }
