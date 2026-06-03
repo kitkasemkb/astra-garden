@@ -490,22 +490,12 @@ export default function HomePage() {
           </div>
 
           <div className="hero-art" aria-hidden="true">
-            <div className="floating-orb orb-one">☉</div>
-            <div className="floating-orb orb-two">☾</div>
-            <div className="floating-orb orb-three">✧</div>
-            <div className="art-card art-main">
+            <div className="hero-wheel-wrap">
+              <div className="hero-wheel-glow" />
               <DecorativeWheel />
             </div>
-            <div className="art-card art-note">
-              <small>Today’s theme</small>
-              <strong>เลือกจังหวะที่ใช่ ก่อนขยับก้าวใหญ่</strong>
-              <p>แปลภาษาดวงให้กลายเป็นคำถามที่ช่วยให้ชีวิตชัดขึ้น</p>
-            </div>
-            <div className="art-card art-list">
-              <span>Birth Chart</span>
-              <span>Life Direction</span>
-              <span>Gentle Advice</span>
-            </div>
+            <div className="hero-wheel-badge hero-wheel-badge-asc">ASC</div>
+            <div className="hero-wheel-badge hero-wheel-badge-mc">MC</div>
           </div>
 
           <div className="tarot-center-banner">
