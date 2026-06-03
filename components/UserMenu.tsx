@@ -59,10 +59,10 @@ export default function UserMenu() {
             📖 ประวัติการดูดวง
           </a>
           <a href="/horoscope" className="user-dropdown-item" onClick={() => setOpen(false)}>
-            ⭐ ดวงรายวัน
+            ⭐ Daily Briefing
           </a>
           <a href="/synastry" className="user-dropdown-item" onClick={() => setOpen(false)}>
-            💞 ดูความเข้ากัน
+            💞 เปรียบดวงคู่
           </a>
           <button className="user-dropdown-item signout" onClick={signOut}>
             🚪 ออกจากระบบ

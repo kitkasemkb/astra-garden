@@ -122,6 +122,19 @@ export default function BirthPage() {
     if (!canSave) return;
     setLoading(true); setError("");
     try {
+      // Ensure session is available (may need refresh after OAuth callback)
+      let { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        const { data: refreshed } = await supabase.auth.refreshSession();
+        session = refreshed.session;
+      }
+      if (!session) {
+        setError("เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่อีกครั้ง");
+        setLoading(false);
+        setTimeout(() => router.push("/auth"), 2000);
+        return;
+      }
+
       const ce = Number(yearBE) - 543;
       const birthDate = `${ce}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
       const birthTime = `${String(hour).padStart(2,"0")}:${String(minute).padStart(2,"0")}`;

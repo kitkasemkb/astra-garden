@@ -48,8 +48,8 @@ const PLANET_MEANINGS: Record<string, Record<string, string>> = {
 
 function norm(x: number) { return ((x % 360) + 360) % 360 }
 
-export async function calculateTransits(natalChart: Chart): Promise<TransitReport> {
-  const now = new Date();
+export async function calculateTransits(natalChart: Chart, forDate?: Date): Promise<TransitReport> {
+  const now = forDate ?? new Date();
   const todayInput = {
     birthDate: now.toISOString().split("T")[0],
     birthTime: `${now.getHours().toString().padStart(2,"0")}:00`,

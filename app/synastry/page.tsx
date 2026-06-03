@@ -1,18 +1,19 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import UserMenu from "@/components/UserMenu";
+import { createClient } from "@/lib/supabase";
 
 const MONTHS_TH = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
-const DAYS = Array.from({length:31},(_,i)=>i+1);
+const DAYS    = Array.from({length:31},(_,i)=>i+1);
 const YEARS_BE = Array.from({length:90},(_,i)=>2568-i);
-const HOURS = Array.from({length:24},(_,i)=>i);
+const HOURS   = Array.from({length:24},(_,i)=>i);
 const MINUTES = Array.from({length:60},(_,i)=>i);
 
 type PersonData = { name:string; yearBE:string; month:string; day:string; hour:string; minute:string };
-const emptyPerson = (): PersonData => ({ name:"", yearBE:"", month:"", day:"", hour:"", minute:"" });
+const emptyPerson = (): PersonData => ({ name:"", yearBE:"", month:"", day:"", hour:"", minute:"0" });
 
-function BirthForm({ label, emoji, data, onChange }: {
-  label: string; emoji: string; data: PersonData; onChange: (d: PersonData) => void;
+function BirthForm({ label, emoji, data, onChange, locked }: {
+  label: string; emoji: string; data: PersonData; onChange: (d: PersonData) => void; locked?: boolean;
 }) {
   const set = (k: keyof PersonData) => (e: React.ChangeEvent<HTMLSelectElement|HTMLInputElement>) =>
     onChange({ ...data, [k]: e.target.value });
@@ -21,29 +22,30 @@ function BirthForm({ label, emoji, data, onChange }: {
       <div className="synastry-person-header">
         <span className="synastry-emoji">{emoji}</span>
         <h3>{label}</h3>
+        {locked && <span style={{ fontSize:11, color:"var(--aurora)", marginLeft:"auto" }}>✦ จากโปรไฟล์คุณ</span>}
       </div>
       <label className="lux-field" style={{ marginBottom:14 }}>
-        <span>ชื่อ (ไม่บังคับ)</span>
-        <input value={data.name} onChange={set("name")} placeholder="เช่น A หรือ คุณ..." />
+        <span>ชื่อ</span>
+        <input value={data.name} onChange={set("name")} placeholder="เช่น ฉัน หรือ คุณ..." />
       </label>
       <div className="synastry-date-grid">
         <label className="lux-field">
           <span>วัน</span>
-          <select value={data.day} onChange={set("day")}>
+          <select value={data.day} onChange={set("day")} disabled={locked}>
             <option value="">วัน</option>
             {DAYS.map(d=><option key={d} value={d}>{d}</option>)}
           </select>
         </label>
         <label className="lux-field">
           <span>เดือน</span>
-          <select value={data.month} onChange={set("month")}>
+          <select value={data.month} onChange={set("month")} disabled={locked}>
             <option value="">เดือน</option>
             {MONTHS_TH.map((m,i)=><option key={i} value={i+1}>{m}</option>)}
           </select>
         </label>
         <label className="lux-field">
           <span>ปี พ.ศ.</span>
-          <select value={data.yearBE} onChange={set("yearBE")}>
+          <select value={data.yearBE} onChange={set("yearBE")} disabled={locked}>
             <option value="">ปี</option>
             {YEARS_BE.map(y=><option key={y} value={y}>{y}</option>)}
           </select>
@@ -52,15 +54,14 @@ function BirthForm({ label, emoji, data, onChange }: {
       <div className="synastry-date-grid" style={{gridTemplateColumns:"1fr 1fr"}}>
         <label className="lux-field">
           <span>ชั่วโมง</span>
-          <select value={data.hour} onChange={set("hour")}>
+          <select value={data.hour} onChange={set("hour")} disabled={locked}>
             <option value="">ชั่วโมง</option>
             {HOURS.map(h=><option key={h} value={h}>{String(h).padStart(2,"0")} น.</option>)}
           </select>
         </label>
         <label className="lux-field">
           <span>นาที</span>
-          <select value={data.minute} onChange={set("minute")}>
-            <option value="">นาที</option>
+          <select value={data.minute} onChange={set("minute")} disabled={locked}>
             {MINUTES.map(m=><option key={m} value={m}>{String(m).padStart(2,"0")}</option>)}
           </select>
         </label>
@@ -72,8 +73,29 @@ function BirthForm({ label, emoji, data, onChange }: {
 export default function SynastryPage() {
   const [personA, setPersonA] = useState<PersonData>(emptyPerson());
   const [personB, setPersonB] = useState<PersonData>(emptyPerson());
-  const [reading, setReading] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
+  const [reading, setReading]   = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [copied, setCopied]     = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data }) => {
+      const meta = data.session?.user?.user_metadata;
+      if (meta?.birth_year_be) {
+        const name = meta.full_name || meta.display_name || data.session!.user.email?.split("@")[0] || "ฉัน";
+        setPersonA({
+          name: String(name),
+          yearBE: String(meta.birth_year_be),
+          month: String(meta.birth_month),
+          day: String(meta.birth_day),
+          hour: String(meta.birth_hour),
+          minute: String(meta.birth_minute ?? 0),
+        });
+        setProfileLoaded(true);
+      }
+    });
+  }, []);
 
   const canSubmit = useMemo(() =>
     personA.yearBE && personA.month && personA.day && personA.hour !== "" &&
@@ -89,8 +111,7 @@ export default function SynastryPage() {
   }
 
   async function startReading() {
-    setLoading(true);
-    setReading("");
+    setLoading(true); setReading("");
     try {
       const res = await fetch("/api/synastry", {
         method: "POST",
@@ -113,13 +134,28 @@ export default function SynastryPage() {
           if (!line.startsWith("data: ")) continue;
           const data = JSON.parse(line.slice(6));
           if (data.type === "delta") setReading(p => p + data.text);
-          if (data.type === "done") setLoading(false);
+          if (data.type === "done")  setLoading(false);
           if (data.type === "error") { setReading(data.message); setLoading(false); }
         }
       }
     } catch {
       setReading("เกิดข้อผิดพลาด กรุณาลองใหม่");
       setLoading(false);
+    }
+  }
+
+  function shareResult() {
+    const nameA = personA.name || "คนที่ 1";
+    const nameB = personB.name || "คนที่ 2";
+    const preview = reading.slice(0, 150).replace(/\*\*/g, "");
+    const url = `${window.location.origin}/share?topic=${encodeURIComponent(`ความเข้ากันของ${nameA}กับ${nameB}`)}&category=${encodeURIComponent("Synastry")}&preview=${encodeURIComponent(preview)}`;
+    if (navigator.share) {
+      navigator.share({ title: `Synastry: ${nameA} × ${nameB}`, text: preview, url });
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
     }
   }
 
@@ -141,17 +177,33 @@ export default function SynastryPage() {
         <div className="synastry-header">
           <span className="kicker">✦ Synastry Reading</span>
           <h1 className="synastry-title">ดวงของคุณ<em>เข้ากันแค่ไหน</em></h1>
-          <p>ใส่วันเกิดของทั้งสองคน ระบบจะเปรียบเทียบดวงและวิเคราะห์ความเข้ากันในทุกมิติ</p>
+          <p>เปรียบดวงกับคนใกล้ชิดได้ไม่จำกัด — คนรัก เพื่อน ครอบครัว หุ้นส่วน</p>
         </div>
 
         <div className="synastry-forms">
-          <BirthForm label="คนที่ 1" emoji="🌙" data={personA} onChange={setPersonA} />
+          <BirthForm label="คุณ" emoji="🌙" data={personA} onChange={setPersonA} locked={profileLoaded} />
+          {profileLoaded && (
+            <div style={{ textAlign:"center" }}>
+              <button
+                className="auth-link"
+                style={{ fontSize:11 }}
+                onClick={() => setProfileLoaded(false)}
+              >
+                แก้ไขข้อมูล
+              </button>
+            </div>
+          )}
           <div className="synastry-vs">💞</div>
-          <BirthForm label="คนที่ 2" emoji="☀️" data={personB} onChange={setPersonB} />
+          <BirthForm label="อีกคน" emoji="☀️" data={personB} onChange={setPersonB} />
         </div>
 
         <div style={{textAlign:"center", marginTop:24}}>
-          <button className="luxury-button" onClick={startReading} disabled={!canSubmit || loading} style={{minWidth:240}}>
+          <button
+            className="luxury-button"
+            onClick={startReading}
+            disabled={!canSubmit || loading}
+            style={{minWidth:240}}
+          >
             {loading ? "กำลังวิเคราะห์ดวง…" : "วิเคราะห์ความเข้ากัน"}
           </button>
         </div>
@@ -165,14 +217,27 @@ export default function SynastryPage() {
               </div>
             )}
             {reading && (
-              <div className="synastry-text">
-                {reading.split("\n").map((line, i) => {
-                  if (line.startsWith("**") && line.endsWith("**"))
-                    return <h3 key={i} className="synastry-section">{line.replace(/\*\*/g,"")}</h3>;
-                  if (!line.trim()) return <br key={i}/>;
-                  return <p key={i}>{line.replace(/\*\*/g,"")}</p>;
-                })}
-              </div>
+              <>
+                <div className="synastry-text">
+                  {reading.split("\n").map((line, i) => {
+                    if (line.startsWith("**") && line.endsWith("**"))
+                      return <h3 key={i} className="synastry-section">{line.replace(/\*\*/g,"")}</h3>;
+                    if (!line.trim()) return <br key={i}/>;
+                    return <p key={i}>{line.replace(/\*\*/g,"")}</p>;
+                  })}
+                </div>
+
+                {!loading && (
+                  <div style={{ textAlign:"center", marginTop:24, display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
+                    <button className="share-btn" onClick={shareResult} style={{ display:"inline-flex", alignItems:"center", gap:8 }}>
+                      🔗 {copied ? "คัดลอกแล้ว!" : "แชร์ผลเปรียบดวงนี้"}
+                    </button>
+                    <button className="ghost-button" onClick={() => { setReading(""); setPersonB(emptyPerson()); }}>
+                      เปรียบกับคนใหม่
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}

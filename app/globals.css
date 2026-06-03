@@ -763,8 +763,36 @@ body::before {
 .synastry-text p { font-size: 15px; color: var(--star-mid); line-height: 1.85; margin: 6px 0 }
 .synastry-section { font-family: var(--serif); font-size: 22px; font-weight: 300; color: var(--aurora-2); margin: 22px 0 8px }
 
+/* ── Daily Briefing ─────────────────────────────────────────────── */
+.briefing-transit-bar { background: var(--glass); border: 1px solid var(--line); border-radius: 20px; padding: 18px 22px; margin-bottom: 28px; backdrop-filter: blur(20px) }
+.briefing-transit-summary { font-size: 14px; color: var(--star-mid); margin-bottom: 14px; display: flex; align-items: center; gap: 10px }
+.briefing-transit-icon { font-size: 18px; color: var(--aurora); flex-shrink: 0 }
+.briefing-transit-aspects { display: flex; flex-wrap: wrap; gap: 8px }
+.transit-pill { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border: 1px solid; border-radius: 100px; font-size: 12px; color: var(--star-mid) }
+.transit-pill small { font-size: 11px }
+
+.briefing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 36px }
+.briefing-card-wide { grid-column: 1 / -1 }
+.briefing-card { background: var(--glass); border: 1px solid var(--line); border-radius: 20px; padding: 22px; backdrop-filter: blur(20px) }
+.briefing-card-icon { font-size: 26px; margin-bottom: 10px }
+.briefing-card-title { font-family: var(--serif); font-size: 18px; font-weight: 300; color: var(--aurora-2); margin: 0 0 10px }
+.briefing-card p { font-size: 14px; color: var(--star-mid); line-height: 1.8; margin: 4px 0 }
+
+.transit-alerts-section { margin-bottom: 36px }
+.transit-alerts-header { text-align: center; margin-bottom: 18px }
+.transit-alerts-header h2 { font-family: var(--serif); font-size: 28px; font-weight: 300; color: var(--star); margin: 6px 0 0 }
+.transit-alerts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px }
+.alert-card { background: var(--glass); border: 1px solid var(--line); border-left: 3px solid; border-radius: 16px; padding: 16px 18px; backdrop-filter: blur(20px) }
+.alert-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap }
+.alert-card-header strong { font-size: 14px; color: var(--star); flex: 1 }
+.alert-badge { font-size: 11px; padding: 2px 10px; border-radius: 100px }
+.alert-card p { font-size: 13px; color: var(--star-mid); line-height: 1.7; margin: 0 }
+
 /* ── Responsive Sprint 2 ────────────────────────────────────────── */
 @media(max-width:900px) {
+  .briefing-grid { grid-template-columns: repeat(2, 1fr) }
+  .briefing-card-wide { grid-column: 1 / -1 }
+  .transit-alerts-grid { grid-template-columns: 1fr }
   .history-layout { grid-template-columns: 1fr }
   .history-sidebar { position: relative; top: auto }
   .signs-grid { grid-template-columns: repeat(4,1fr) }
@@ -776,6 +804,8 @@ body::before {
   .sign-date { display: none }
   .synastry-date-grid { grid-template-columns: 1fr 1fr }
   .history-detail-header h2 { font-size: 24px }
+  .briefing-grid { grid-template-columns: 1fr }
+  .briefing-card-wide { grid-column: auto }
 }
 
 /* ── Topbar Tarot button ─────────────────────────────────────────── */
