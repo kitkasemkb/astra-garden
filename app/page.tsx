@@ -106,57 +106,8 @@ type WizardStep = 0 | 1 | 2 | 3 | 4;
 
 type ResultSection = { title: string; body: string };
 
-const categories = [
-  {
-    id: "business",
-    label: "ธุรกิจ",
-    hint: "ขยายกิจการ ลงทุน หุ้นส่วน โปรเจกต์ใหม่",
-    prompt: "ฉันกำลังตัดสินใจเรื่องธุรกิจ",
-  },
-  {
-    id: "career",
-    label: "การงาน",
-    hint: "เปลี่ยนงาน เติบโต ภาระงาน ทิศทางอาชีพ",
-    prompt: "ฉันอยากมองทิศทางการงานให้ชัดขึ้น",
-  },
-  {
-    id: "money",
-    label: "การเงิน",
-    hint: "รายรับ รายจ่าย ความเสี่ยง แผนสำรอง",
-    prompt: "ฉันอยากวางแผนการเงินให้รอบคอบขึ้น",
-  },
-  {
-    id: "relationship",
-    label: "ความสัมพันธ์",
-    hint: "คนรัก ครอบครัว หุ้นส่วน ความเข้าใจกัน",
-    prompt: "ฉันอยากเข้าใจความสัมพันธ์นี้ให้มากขึ้น",
-  },
-  {
-    id: "life",
-    label: "ชีวิตทั่วไป",
-    hint: "ความกังวล ตัวตน จังหวะชีวิต การตัดสินใจ",
-    prompt: "ฉันรู้สึกว่าช่วงนี้ชีวิตต้องการทิศทาง",
-  },
-];
-
-const tones = [
-  { id: "gentle", label: "อ่อนโยน", hint: "เหมือนมีคนค่อย ๆ ช่วยฟัง" },
-  { id: "direct", label: "ตรงประเด็น", hint: "ชัด กระชับ ไม่อ้อมมาก" },
-  {
-    id: "deep",
-    label: "ลึกและละเอียด",
-    hint: "เชื่อมดวงกับบริบทชีวิตให้มากขึ้น",
-  },
-  { id: "action", label: "เน้นแผนปฏิบัติ", hint: "จบด้วยสิ่งที่ควรทำต่อ" },
-];
-
-const stepLabels = [
-  "เริ่มต้น",
-  "ข้อมูลเกิด",
-  "ตั้งคำถาม",
-  "เล่าบริบท",
-  "รายงาน",
-];
+const CATEGORY_IDS = ["business", "career", "money", "relationship", "life"] as const;
+const TONE_IDS = ["gentle", "direct", "deep", "action"] as const;
 
 function parseSections(answer: string): ResultSection[] {
   const titles = [
@@ -214,6 +165,23 @@ const MINUTES = Array.from({ length: 60 }, (_, i) => i); // ทุก 1 นา�
 
 export default function HomePage() {
   const { t } = useLang();
+
+  const categories = useMemo(() => CATEGORY_IDS.map(id => ({
+    id,
+    label: t(`cat.${id}.label` as Parameters<typeof t>[0]),
+    hint:  t(`cat.${id}.hint`  as Parameters<typeof t>[0]),
+    prompt: t(`cat.${id}.label` as Parameters<typeof t>[0]),
+  })), [t]);
+
+  const tones = useMemo(() => TONE_IDS.map(id => ({
+    id,
+    label: t(`tone.${id}.label` as Parameters<typeof t>[0]),
+    hint:  t(`tone.${id}.hint`  as Parameters<typeof t>[0]),
+  })), [t]);
+
+  const stepLabels = useMemo(() => [
+    t("step.start"), t("step.birth"), t("step.question"), t("step.context"), t("step.report"),
+  ], [t]);
   const [step, setStep] = useState<WizardStep>(0);
   const [category, setCategory] = useState("business");
   const [advisorTone, setAdvisorTone] = useState("gentle");
@@ -477,17 +445,15 @@ export default function HomePage() {
       {step === 0 && (
         <section className="landing-scene">
           <div className="landing-copy">
-            <div className="kicker">V7 Astral Garden Experience</div>
-            <h1>พื้นที่เงียบ ๆ สำหรับอ่านจังหวะชีวิตของคุณ</h1>
-            <p>
-              กรอกเรื่องที่อยากปรึกษาและข้อมูลเกิด ระบบจะคำนวณแผนที่ดวง แล้วแปลมุมมองทางโหราศาสตร์ให้เป็นคำแนะนำที่อ่านง่ายและใช้ไตร่ตรองได้จริง
-            </p>
+            <div className="kicker">{t("landing.kicker")}</div>
+            <h1>{t("landing.title")}</h1>
+            <p>{t("landing.desc")}</p>
             <div className="landing-actions">
               <button className="luxury-button" onClick={() => setStep(1)}>
-                เริ่มอ่านจังหวะชีวิต
+                {t("landing.cta")}
               </button>
             </div>
-            <p className="landing-action-hint">อ่านแบบผ่อนคลาย ใช้เป็นมุมมองประกอบ ไม่ใช่คำตัดสินแทนคุณ</p>
+            <p className="landing-action-hint">{t("landing.hint")}</p>
           </div>
 
           {/* Mobile wheel — shows only on mobile between copy and tarot banner */}
@@ -509,11 +475,11 @@ export default function HomePage() {
 
           <div className="tarot-center-banner">
             <div className="tarot-banner-left">
-              <span className="kicker">✦ Golden Dawn · Rider-Waite · Thoth</span>
-              <h2>ไพ่ทาโร่<br /><em>เปิดเผยชะตาชีวิต</em></h2>
-              <p>Celtic Cross 10 ใบ อ่านทุกมิติพร้อม AI ตีความ</p>
+              <span className="kicker">{t("page.tarotBannerKicker")}</span>
+              <h2>{t("page.tarotBannerTitle")}<br /><em>{t("page.tarotBannerSub")}</em></h2>
+              <p>{t("page.tarotBannerDesc")}</p>
               <a href="/tarot" className="luxury-button" style={{ textDecoration:"none", display:"inline-flex", alignItems:"center", gap:8, marginTop:16 }}>
-                <IconCrystalBall size={16}/> เปิดไพ่เปิดชะตา
+                <IconCrystalBall size={16}/> {t("page.tarotBannerCta")}
               </a>
             </div>
             <div className="tarot-banner-cards">
@@ -527,9 +493,9 @@ export default function HomePage() {
           </div>
 
           <div className="learning-strip">
-            <article><span>01</span><b>ดวงกำเนิด</b><p>อ่านแกนตัวตน ลัคนา และจังหวะชีวิตจากข้อมูลเกิด</p></article>
-            <article><span>02</span><b>คำถามชีวิต</b><p>เชื่อมดวงกับเรื่องจริงที่คุณกำลังตัดสินใจ</p></article>
-            <article><span>03</span><b>คำแนะนำภาษาง่าย</b><p>ไม่ฟันธง แต่ช่วยให้เห็นทางเลือกอย่างอ่อนโยน</p></article>
+            <article><span>01</span><b>{t("landing.feature1Title")}</b><p>{t("landing.feature1Desc")}</p></article>
+            <article><span>02</span><b>{t("landing.feature2Title")}</b><p>{t("landing.feature2Desc")}</p></article>
+            <article><span>03</span><b>{t("landing.feature3Title")}</b><p>{t("landing.feature3Desc")}</p></article>
           </div>
         </section>
       )}
@@ -538,10 +504,10 @@ export default function HomePage() {
         <section className="session-layout">
           <aside className="session-rail">
             <div className="rail-card identity-card">
-              <span className="rail-label">Session</span>
+              <span className="rail-label">{t("page.session")}</span>
               <h2>{currentCategory.label}</h2>
               <p>{currentCategory.hint}</p>
-              <div className="tone-mini">โทน: {currentTone.label}</div>
+              <div className="tone-mini">{t("page.tone")}: {currentTone.label}</div>
             </div>
 
             <div className="step-timeline">
@@ -558,11 +524,8 @@ export default function HomePage() {
             </div>
 
             <div className="rail-card quiet-note">
-              <span className="rail-label">Principle</span>
-              <p>
-                การอ่านนี้ใช้โหราศาสตร์เป็นเลนส์สะท้อน ไม่ใช่การรับประกันอนาคต
-                ผู้ใช้ยังเป็นคนตัดสินใจด้วยข้อมูลจริงเสมอ
-              </p>
+              <span className="rail-label">{t("page.principle.label")}</span>
+              <p>{t("page.principle")}</p>
             </div>
           </aside>
 
@@ -571,12 +534,10 @@ export default function HomePage() {
               <div className="editorial-panel birth-panel">
                 <div className="panel-number">01</div>
                 <div className="panel-heading narrow">
-                  <span>Birth data</span>
-                  <h2>ข้อมูลเกิดสำหรับสร้างแผนที่ดวง</h2>
+                  <span>{t("page.birthData")}</span>
+                  <h2>{t("birth.title")}</h2>
                   <p>
-                    {profileLoaded
-                      ? "✅ โหลดข้อมูลเกิดจากโปรไฟล์แล้ว กดไปต่อได้เลย"
-                      : "ดวงชะตาเริ่มต้นจากวันและเวลาเกิด กรอกให้ถูกต้องเพื่อความแม่นยำ"}
+                    {profileLoaded ? t("birth.loaded") : t("birth.fillIn")}
                   </p>
                 </div>
 
@@ -587,32 +548,32 @@ export default function HomePage() {
                       <strong>{birthDay}/{birthMonth}/{birthYearBE} เวลา {birthHour.padStart(2,"0")}:{birthMinute.padStart(2,"0")} น.</strong>
                       <small>📍 {selectedProvince}</small>
                     </div>
-                    <button className="auth-link" style={{fontSize:11}} onClick={() => setProfileLoaded(false)}>แก้ไข</button>
+                    <button className="auth-link" style={{fontSize:11}} onClick={() => setProfileLoaded(false)}>{t("birth.edit")}</button>
                   </div>
                 )}
 
                 {/* วันเกิด — ซ่อนถ้า profileLoaded */}
                 <div style={{ marginBottom: "20px", display: profileLoaded ? "none" : "block" }}>
                   <span className="lux-field" style={{ display:"block", marginBottom:"10px" }}>
-                    <span>วันเกิด (พ.ศ.)</span>
+                    <span>{t("birth.year")}</span>
                   </span>
                   <div className="birth-grid" style={{ gap:"12px" }}>
                     <label className="lux-field">
-                      <span>วัน</span>
+                      <span>{t("birth.day")}</span>
                       <select value={birthDay} onChange={e => setBirthDay(e.target.value)}>
                         <option value="">-- วัน --</option>
                         {DAYS.map(d => <option key={d} value={String(d)}>{d}</option>)}
                       </select>
                     </label>
                     <label className="lux-field">
-                      <span>เดือน</span>
+                      <span>{t("birth.month")}</span>
                       <select value={birthMonth} onChange={e => setBirthMonth(e.target.value)}>
                         <option value="">-- เดือน --</option>
                         {MONTHS_TH.map((m, i) => <option key={i} value={String(i+1)}>{m}</option>)}
                       </select>
                     </label>
                     <label className="lux-field">
-                      <span>ปี พ.ศ.</span>
+                      <span>{t("birth.year")}</span>
                       <select value={birthYearBE} onChange={e => setBirthYearBE(e.target.value)}>
                         <option value="">-- ปี --</option>
                         {YEARS_BE.map(y => <option key={y} value={String(y)}>{y}</option>)}
@@ -625,14 +586,14 @@ export default function HomePage() {
                 <div style={{ marginBottom: "20px", display: profileLoaded ? "none" : "block" }}>
                   <div className="birth-grid" style={{ gap:"12px" }}>
                     <label className="lux-field">
-                      <span>ชั่วโมงเกิด</span>
+                      <span>{t("birth.hour")}</span>
                       <select value={birthHour} onChange={e => setBirthHour(e.target.value)}>
                         <option value="">-- ชั่วโมง --</option>
                         {HOURS.map(h => <option key={h} value={String(h)}>{String(h).padStart(2,"0")} น.</option>)}
                       </select>
                     </label>
                     <label className="lux-field">
-                      <span>นาทีเกิด</span>
+                      <span>{t("birth.minute")}</span>
                       <select value={birthMinute} onChange={e => setBirthMinute(e.target.value)}>
                         <option value="">-- นาที --</option>
                         {MINUTES.map(m => <option key={m} value={String(m)}>{String(m).padStart(2,"0")}</option>)}
@@ -640,12 +601,12 @@ export default function HomePage() {
                     </label>
                   </div>
                   <small style={{ color:"var(--star-dim)", fontSize:"11px", marginTop:"6px", display:"block" }}>
-                    ไม่รู้เวลาเกิดแน่ชัด ให้ประมาณช่วงเวลา เช่น ตีสี่ = 04:00
+                    {t("page.birthTimeNote")}
                   </small>
                 </div>
 
                 <label className="lux-field">
-                  <span>จังหวัด/สถานที่เกิดแบบเร็ว</span>
+                  <span>{t("birth.province")}</span>
                   <select
                     value={selectedProvince}
                     onChange={(e) => chooseProvince(e.target.value)}
@@ -654,10 +615,7 @@ export default function HomePage() {
                       <option key={p.name}>{p.name}</option>
                     ))}
                   </select>
-                  <small>
-                    สามารถแก้ latitude/longitude เองได้
-                    หากต้องการระบุพิกัดละเอียดกว่าระดับจังหวัด
-                  </small>
+                  <small>{t("page.birthNote")}</small>
                 </label>
 
                 <div className="geo-grid">
@@ -694,7 +652,7 @@ export default function HomePage() {
                 <div className="tone-suite">
                   <div>
                     <span className="rail-label">Tone</span>
-                    <h3>อยากให้หมอดูพูดกับคุณแบบไหน</h3>
+                    <h3>{t("page.toneTitle")}</h3>
                   </div>
                   <div className="premium-choice-grid tone-grid">
                     {tones.map((item) => (
@@ -716,12 +674,9 @@ export default function HomePage() {
               <div className="editorial-panel question-panel">
                 <div className="panel-number">02</div>
                 <div className="panel-heading">
-                  <span>Choose your theme</span>
-                  <h2>อยากให้ดวงทำนายเรื่องไหน</h2>
-                  <p>
-                    เลือกหมวดที่ใกล้กับสิ่งที่อยากรู้
-                    แล้วเขียนคำถามในใจของคุณ
-                  </p>
+                  <span>{t("page.chooseTheme")}</span>
+                  <h2>{t("page.questionTitle")}</h2>
+                  <p>{t("page.questionDesc")}</p>
                 </div>
 
                 <div className="premium-choice-grid">
@@ -738,11 +693,11 @@ export default function HomePage() {
                 </div>
 
                 <label className="lux-field statement-field">
-                  <span>คำถามหลัก</span>
+                  <span>{t("page.mainQuestion")}</span>
                   <input
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
-                    placeholder="เช่น ควรเดินหน้าธุรกิจนี้ไหม"
+                    placeholder={t("page.questionPlaceholder")}
                   />
                 </label>
               </div>
@@ -753,43 +708,40 @@ export default function HomePage() {
                 <div className="panel-number">03</div>
                 <div className="panel-heading narrow">
                   <span>Tell the context</span>
-                  <h2>เล่าสถานการณ์ให้หมอดูฟัง</h2>
-                  <p>
-                    ยิ่งเล่าได้ละเอียด ดวงยิ่งแม่น
-                    ไม่ต้องเขียนสวย แค่เล่าความจริง
-                  </p>
+                  <h2>{t("page.contextTitle")}</h2>
+                  <p>{t("page.contextDesc")}</p>
                 </div>
 
                 <label className="lux-field story-field">
-                  <span>สถานการณ์ตอนนี้</span>
+                  <span>{t("page.contextLabel")}</span>
                   <textarea
                     value={situation}
                     onChange={(e) => setSituation(e.target.value)}
-                    placeholder="เช่น ตอนนี้กำลังคิดจะขยายกิจการ แต่ยังไม่แน่ใจเรื่องกระแสเงินสด ทีมงาน และจังหวะเวลา..."
+                    placeholder={t("page.contextPlaceholder")}
                   />
                 </label>
 
                 <div className="field-pair">
                   <label className="lux-field">
-                    <span>ทางเลือกที่กำลังคิด</span>
+                    <span>{t("page.optionsLabel")}</span>
                     <input
                       value={options}
                       onChange={(e) => setOptions(e.target.value)}
-                      placeholder="เดินหน้าต่อ / พักก่อน / ทดลองเล็ก ๆ"
+                      placeholder={t("page.optionsPlaceholder")}
                     />
                   </label>
                   <label className="lux-field">
-                    <span>สิ่งที่กังวลที่สุด</span>
+                    <span>{t("page.concernLabel")}</span>
                     <input
                       value={concern}
                       onChange={(e) => setConcern(e.target.value)}
-                      placeholder="กลัวตัดสินใจเร็วไป / กลัวเสียโอกาส"
+                      placeholder={t("page.concernPlaceholder")}
                     />
                   </label>
                 </div>
 
                 <label className="lux-field">
-                  <span>ผลลัพธ์ที่อยากได้</span>
+                  <span>{t("page.goalLabel")}</span>
                   <input
                     value={goal}
                     onChange={(e) => setGoal(e.target.value)}
@@ -803,12 +755,9 @@ export default function HomePage() {
                 {loading && (
                   <div className="editorial-panel loading-panel">
                     <div className="draw-orbit" />
-                    <span>Preparing your chart</span>
-                    <h2>กำลังคำนวณดวงและแปลความหมาย</h2>
-                    <p>
-                      ระบบกำลังเชื่อมข้อมูลดวงกับบริบทชีวิตจริง
-                      เพื่อให้คำตอบไม่แข็งเป็นสูตรสำเร็จ
-                    </p>
+                    <span>{t("result.preparing")}</span>
+                    <h2>{t("result.calculating")}</h2>
+                    <p>{t("result.calcDesc")}</p>
                   </div>
                 )}
 
@@ -828,19 +777,16 @@ export default function HomePage() {
                   <div className="editorial-panel ready-panel">
                     <div className="panel-number">04</div>
                     <div className="panel-heading centered">
-                      <span>Ready to read</span>
-                      <h2>พร้อมสร้างรายงานส่วนตัว</h2>
-                      <p>
-                        ระบบจะคำนวณดวงกำเนิด แสดงวงล้อดวง และให้ AI
-                        แปลความหมายเป็นคำแนะนำที่อ่านง่าย
-                      </p>
+                      <span>{t("result.ready")}</span>
+                      <h2>{t("result.readyTitle")}</h2>
+                      <p>{t("result.readyDesc")}</p>
                     </div>
                     <button
                       className="luxury-button wide-button"
                       onClick={submit}
                       disabled={!birthDate || !birthTime || !topic.trim()}
                     >
-                      คำนวณดวงและทำนาย
+                      {t("btn.calculate")}
                     </button>
                   </div>
                 )}
@@ -850,32 +796,32 @@ export default function HomePage() {
                     <div className="chart-focus-card">
                       <div className="chart-titlebar">
                         <span>Birth Chart Wheel</span>
-                        <h2>แผนที่ดวงกำเนิด</h2>
+                        <h2>{t("page.chartTitle")}</h2>
                       </div>
                       <AstrologyWheel chart={chart} />
                       <AspectLegend />
                     </div>
                     <aside className="chart-data-card">
-                      <span className="rail-label">Chart Snapshot</span>
-                      <h3>แกนดวงที่ใช้ในการอ่าน</h3>
+                      <span className="rail-label">{t("page.chartSnapshot")}</span>
+                      <h3>{t("page.chartReadAxis")}</h3>
                       <div className="metric-list">
                         <div>
-                          <small>ลัคนา</small>
+                          <small>{t("page.asc")}</small>
                           <strong>
                             {chart.ascendant.sign}{" "}
                             {chart.ascendant.degreeInSign}°
                           </strong>
                         </div>
                         <div>
-                          <small>MC / งาน</small>
+                          <small>{t("page.mc")}</small>
                           <strong>
                             {chart.midheaven.sign}{" "}
                             {chart.midheaven.degreeInSign}°
                           </strong>
                         </div>
                         <div>
-                          <small>Aspect</small>
-                          <strong>{chart.aspects.length} รายการ</strong>
+                          <small>{t("page.aspect")}</small>
+                          <strong>{chart.aspects.length} {t("page.aspects")}</strong>
                         </div>
                       </div>
                       <div className="planet-ledger">
@@ -885,7 +831,7 @@ export default function HomePage() {
                             <b>
                               {p.sign} {p.degreeInSign}°
                             </b>
-                            <small>เรือน {p.house}</small>
+                            <small>{t("page.house")} {p.house}</small>
                           </div>
                         ))}
                       </div>
@@ -896,18 +842,15 @@ export default function HomePage() {
                 {sections.length > 0 && (
                   <section className="premium-report">
                     <div className="report-opener">
-                      <span>Advisor Report</span>
-                      <h2>คำแนะนำที่แปลจากดวงและบริบทของคุณ</h2>
-                      <p>
-                        อ่านเป็นมุมมองประกอบการไตร่ตรอง
-                        และใช้ข้อมูลจริงในชีวิตร่วมตัดสินใจเสมอ
-                      </p>
+                      <span>{t("page.advisorReport")}</span>
+                      <h2>{t("result.reportTitle")}</h2>
+                      <p>{t("result.reportDesc")}</p>
                       <a
                         href={`/share?topic=${encodeURIComponent(topic)}&category=${encodeURIComponent(currentCategory.label)}&asc=${encodeURIComponent(chart ? `${chart.ascendant.sign} ${chart.ascendant.degreeInSign}°` : "")}&mc=${encodeURIComponent(chart ? `${chart.midheaven.sign} ${chart.midheaven.degreeInSign}°` : "")}&preview=${encodeURIComponent(sections[0]?.body?.slice(0,120) || "")}`}
                         target="_blank"
                         className="share-btn"
                       >
-                        🔗 แชร์ผลทำนาย
+                        🔗 {t("btn.share")}
                       </a>
                     </div>
                     <div className="report-masonry">
@@ -932,8 +875,8 @@ export default function HomePage() {
                     <div className="chat-header">
                       <div className="chat-header-dot" />
                       <div>
-                        <h3>ถามต่อกับที่ปรึกษา</h3>
-                        <p>อ่านรายงานแล้วยังมีข้อสงสัย? ถามได้เลย</p>
+                        <h3>{t("page.chatTitle")}</h3>
+                        <p>{t("page.chatDesc")}</p>
                       </div>
                     </div>
 
@@ -941,7 +884,7 @@ export default function HomePage() {
                       {chatMessages.length === 0 && (
                         <div className="chat-empty">
                           <span>✦</span>
-                          <p>เริ่มต้นด้วยคำถามที่คุณอยากรู้เพิ่มเติม<br />จากการวิเคราะห์ดวงนี้</p>
+                          <p style={{whiteSpace:"pre-line"}}>{t("page.chatEmpty")}</p>
                         </div>
                       )}
                       {chatMessages.map((msg, i) => (
@@ -966,7 +909,7 @@ export default function HomePage() {
                             sendChat();
                           }
                         }}
-                        placeholder="พิมพ์คำถาม… (Enter ส่ง, Shift+Enter ขึ้นบรรทัดใหม่)"
+                        placeholder={t("page.chatPlaceholder")}
                         rows={1}
                         disabled={chatLoading}
                       />
@@ -990,7 +933,7 @@ export default function HomePage() {
                 onClick={prevStep}
                 disabled={step === 0 || loading}
               >
-                ย้อนกลับ
+                {t("btn.back")}
               </button>
               {step < 4 ? (
                 <button
@@ -998,7 +941,7 @@ export default function HomePage() {
                   onClick={nextStep}
                   disabled={!canGoNext}
                 >
-                  ไปต่อ
+                  {t("btn.next")}
                 </button>
               ) : (
                 <button
@@ -1008,7 +951,7 @@ export default function HomePage() {
                     loading || !birthDate || !birthTime || !topic.trim()
                   }
                 >
-                  อ่านใหม่อีกครั้ง
+                  {t("btn.reread")}
                 </button>
               )}
             </div>
@@ -1016,11 +959,7 @@ export default function HomePage() {
         </section>
       )}
 
-      <footer className="legal-line">
-        คำแนะนำนี้เป็นมุมมองประกอบการไตร่ตรองตามศาสตร์โหราศาสตร์และข้อมูลที่ผู้ใช้ให้
-        ไม่ใช่การรับประกันอนาคต หรือคำแนะนำจากผู้เชี่ยวชาญด้านกฎหมาย การแพทย์
-        หรือการเงิน
-      </footer>
+      <footer className="legal-line">{t("footer.disclaimer")}</footer>
     </main>
   );
 }
