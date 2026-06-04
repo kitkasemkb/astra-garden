@@ -54,7 +54,7 @@ ${formatChart(chartB, personB.name)}
       try {
         const response = await client.responses.create({
           model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-          input: prompt, max_output_tokens: 1200, stream: true,
+          input: prompt, max_output_tokens: 3000, stream: true,
         });
         for await (const event of response) {
           if (event.type === "response.output_text.delta") {
