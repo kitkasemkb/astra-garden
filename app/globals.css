@@ -1668,6 +1668,198 @@ body::after {
 .limit-banner small { color: var(--star-dim); font-size: 12px; }
 
 /* ══════════════════════════════════════════════════════════════════
+   ASTRO DECISION ENGINE
+   ══════════════════════════════════════════════════════════════════ */
+.decision-layout {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Form card */
+.decision-form-card {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 20px;
+  padding: 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Category buttons */
+.decision-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.decision-cat-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 99px;
+  color: var(--star-dim);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.decision-cat-btn:hover { background: rgba(255,255,255,.08); color: var(--star); }
+.decision-cat-btn.active {
+  background: rgba(93,207,255,.12);
+  border-color: rgba(93,207,255,.5);
+  color: var(--aurora);
+}
+
+/* Input row */
+.decision-input-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+.decision-textarea {
+  flex: 1;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: var(--star);
+  font-size: clamp(14px, 2vw, 16px);
+  line-height: 1.6;
+  resize: none;
+  transition: border-color .2s;
+  font-family: var(--sans);
+}
+.decision-textarea:focus {
+  outline: none;
+  border-color: rgba(93,207,255,.5);
+}
+.decision-textarea::placeholder { color: var(--star-dim); }
+.decision-submit-btn {
+  flex-shrink: 0;
+  height: 52px;
+  padding: 0 22px;
+  background: linear-gradient(135deg, var(--aurora), var(--aurora-2));
+  border-radius: 14px;
+  color: var(--void);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: opacity .2s, transform .15s;
+  white-space: nowrap;
+}
+.decision-submit-btn:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); }
+.decision-submit-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Verdict card */
+.decision-verdict-card {
+  border: 2px solid;
+  border-radius: 22px;
+  padding: 28px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.decision-verdict-card::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, currentColor, transparent);
+  opacity: .05;
+  pointer-events: none;
+}
+.decision-verdict-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 99px;
+  color: var(--void);
+  font-size: 15px;
+  font-weight: 700;
+  align-self: flex-start;
+  letter-spacing: 0.05em;
+}
+.decision-question-echo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.decision-question-text {
+  font-size: clamp(15px,2.5vw,18px);
+  color: var(--star);
+  font-style: italic;
+  font-family: var(--serif);
+}
+.decision-verdict-body {
+  font-size: clamp(14px,2vw,16px);
+  color: var(--star-mid);
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* Detail grid */
+.decision-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 560px) { .decision-detail-grid { grid-template-columns: 1fr; } }
+.decision-detail-card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 16px;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.decision-detail-wide { grid-column: 1 / -1; }
+.decision-detail-icon { font-size: 1.4rem; line-height: 1; }
+.decision-detail-title { font-size: clamp(14px,2vw,16px); margin: 0; color: var(--star); font-weight: 600; }
+.decision-detail-body p { margin: 0 0 6px; font-size: clamp(13px,1.8vw,14px); color: var(--star-mid); line-height: 1.7; }
+
+/* Checklist */
+.decision-checklist-card {
+  background: rgba(167,139,250,.07);
+  border: 1px solid rgba(167,139,250,.25);
+  border-radius: 18px;
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.decision-checklist-header { display: flex; gap: 12px; align-items: center; }
+.decision-checklist-body { display: flex; flex-direction: column; gap: 10px; }
+.decision-check-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: rgba(255,255,255,.04);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.decision-check-num {
+  font-size: 1.2rem;
+  font-family: var(--serif);
+  color: #a78bfa;
+  opacity: .7;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+.decision-check-item p { margin: 0; font-size: clamp(13px,2vw,15px); color: var(--star-mid); line-height: 1.7; }
+
+/* ══════════════════════════════════════════════════════════════════
    IKIGAI PAGE
    ══════════════════════════════════════════════════════════════════ */
 .ikigai-layout {

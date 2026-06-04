@@ -84,6 +84,9 @@ export default function UserMenu() {
       <a href="/horoscope" className="user-dropdown-item" onClick={() => setOpen(false)}>
         <IconStar size={16} /> Daily Briefing
       </a>
+      <a href="/decision" className="user-dropdown-item" onClick={() => setOpen(false)}>
+        <IconGalaxy size={16} /> Astro Decision Engine
+      </a>
       <a href="/synastry" className="user-dropdown-item" onClick={() => setOpen(false)}>
         <IconHearts size={16} /> เปรียบดวงคู่
       </a>
