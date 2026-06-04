@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { createClient } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
-import { IconHistory, IconStar, IconHearts, IconLogout } from "@/components/AstraIcons";
+import { IconHistory, IconStar, IconHearts, IconLogout, IconWork } from "@/components/AstraIcons";
 import LangToggle from "@/components/LangToggle";
 
 export default function UserMenu() {
@@ -89,6 +89,12 @@ export default function UserMenu() {
       </a>
       <a href="/ikigai" className="user-dropdown-item" onClick={() => setOpen(false)}>
         <IconStar size={16} /> Ikigai จากดวงชะตา
+      </a>
+      <a href="/career" className="user-dropdown-item" onClick={() => setOpen(false)}>
+        <IconWork size={16} /> Career Path Advisor
+      </a>
+      <a href="/shadow" className="user-dropdown-item" onClick={() => setOpen(false)}>
+        <IconStar size={16} /> Shadow Side
       </a>
       <button className="user-dropdown-item signout" onClick={signOut}>
         <IconLogout size={16} /> ออกจากระบบ
