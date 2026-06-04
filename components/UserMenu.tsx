@@ -87,6 +87,9 @@ export default function UserMenu() {
       <a href="/synastry" className="user-dropdown-item" onClick={() => setOpen(false)}>
         <IconHearts size={16} /> เปรียบดวงคู่
       </a>
+      <a href="/ikigai" className="user-dropdown-item" onClick={() => setOpen(false)}>
+        <IconStar size={16} /> Ikigai จากดวงชะตา
+      </a>
       <button className="user-dropdown-item signout" onClick={signOut}>
         <IconLogout size={16} /> ออกจากระบบ
       </button>
