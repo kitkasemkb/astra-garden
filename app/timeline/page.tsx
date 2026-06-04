@@ -4,27 +4,19 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import UserMenu from "@/components/UserMenu";
 
-const PERIOD_KEYS = [
-  "ตอนนี้ — สิ่งที่ดาวเปิดให้",
-  "1 เดือนข้างหน้า — สิ่งที่ดาวเปิดให้",
-  "3 เดือนข้างหน้า — สิ่งที่ดาวเปิดให้",
-  "6 เดือนข้างหน้า — สิ่งที่ดาวเปิดให้",
-  "12 เดือนข้างหน้า — สิ่งที่ดาวเปิดให้",
-] as const;
-
 const PERIOD_META = [
-  { label: "ตอนนี้",         short: "Now",   color: "#5dcfff", months: 0 },
-  { label: "1 เดือน",        short: "+1M",   color: "#a78bfa", months: 1 },
-  { label: "3 เดือน",        short: "+3M",   color: "#34d399", months: 3 },
-  { label: "6 เดือน",        short: "+6M",   color: "#fbbf24", months: 6 },
-  { label: "12 เดือน",       short: "+12M",  color: "#f472b6", months: 12 },
+  { label: "ตอนนี้",   short: "Now",  color: "#5dcfff", keyword: "ตอนนี้" },
+  { label: "1 เดือน",  short: "+1M",  color: "#a78bfa", keyword: "1 เดือนข้างหน้า" },
+  { label: "3 เดือน",  short: "+3M",  color: "#34d399", keyword: "3 เดือนข้างหน้า" },
+  { label: "6 เดือน",  short: "+6M",  color: "#fbbf24", keyword: "6 เดือนข้างหน้า" },
+  { label: "12 เดือน", short: "+12M", color: "#f472b6", keyword: "12 เดือนข้างหน้า" },
 ];
 
 const QUADRANT_COLOR: Record<string, string> = {
-  "สิ่งที่รัก":       "#f472b6",
-  "เชี่ยวชาญ":        "#a78bfa",
-  "โลกต้องการ":       "#34d399",
-  "มีรายได้":         "#fbbf24",
+  "สิ่งที่รัก": "#f472b6",
+  "เชี่ยวชาญ":  "#a78bfa",
+  "โลกต้องการ": "#34d399",
+  "มีรายได้":   "#fbbf24",
 };
 
 const ENERGY_COLOR: Record<string, string> = {
@@ -38,44 +30,58 @@ type PeriodData = {
   energy: string;
   meaning: string;
   actions: string[];
+  raw: string;
 };
 
-function parsePeriod(raw: string, key: string): PeriodData {
+// ดึง block ระหว่าง ** headers — ใช้ keyword แบบ loose ไม่ต้องตรงทั้งหมด
+function extractBlock(raw: string, keyword: string): string {
+  // หา **...keyword...**  แบบ lookahead ถึง ** ถัดไป
+  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const pattern = new RegExp(
-    `\\*\\*${key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\*\\*([\\s\\S]*?)(?=\\*\\*|$)`, "i"
+    `\\*\\*[^*]*${escaped}[^*]*\\*\\*([\\s\\S]*?)(?=\\*\\*[^*]+\\*\\*|$)`, "i"
   );
-  const block = raw.match(pattern)?.[1]?.trim() ?? "";
-  const field = (k: string) => {
-    const m = block.match(new RegExp(`${k}[:：]\\s*([^\\n]+)`));
-    return m?.[1]?.trim() ?? "";
-  };
-  const meaningMatch = block.match(/ความหมาย[:：]\s*([\s\S]*?)(?=ลงมือทำ|$)/);
-  const actionsMatch = block.match(/ลงมือทำ[:：]\s*([\s\S]*?)$/);
-  const actions = (actionsMatch?.[1] ?? "")
+  return raw.match(pattern)?.[1]?.trim() ?? "";
+}
+
+function extractField(block: string, label: string): string {
+  // รองรับ : หรือ ： และ bold (**label**:)
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const m = block.match(new RegExp(`(?:\\*\\*)?${escaped}(?:\\*\\*)?\\s*[:：]\\s*([^\\n]+)`, "i"));
+  return m?.[1]?.replace(/\*\*/g, "").trim() ?? "";
+}
+
+function extractMultiline(block: string, label: string, stopLabel?: string): string {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const stopEscaped = stopLabel ? stopLabel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") : null;
+  const stopPart = stopEscaped ? `(?=(?:\\*\\*)?${stopEscaped}|$)` : "(?=$)";
+  const pattern = new RegExp(
+    `(?:\\*\\*)?${escaped}(?:\\*\\*)?\\s*[:：]\\s*([\\s\\S]*?)${stopPart}`, "i"
+  );
+  return block.match(pattern)?.[1]?.replace(/\*\*/g, "").trim() ?? "";
+}
+
+function parsePeriod(raw: string, keyword: string): PeriodData {
+  const block = extractBlock(raw, keyword);
+  const quadrant = extractField(block, "วง Ikigai ที่เปิดอยู่") ||
+                   extractField(block, "วง Ikigai") ||
+                   extractField(block, "Ikigai");
+  const energy   = extractField(block, "พลังงาน");
+  const meaning  = extractMultiline(block, "ความหมาย", "ลงมือทำ");
+  const actionRaw = extractMultiline(block, "ลงมือทำ");
+  const actions  = actionRaw
     .split("\n")
-    .map(l => l.replace(/^[-•0-9.)\s]+/, "").replace(/\*\*/g, "").trim())
-    .filter(Boolean);
-  return {
-    quadrant: field("วง Ikigai ที่เปิดอยู่"),
-    energy:   field("พลังงาน"),
-    meaning:  meaningMatch?.[1]?.trim().replace(/\*\*/g, "") ?? "",
-    actions,
-  };
+    .map(l => l.replace(/^[-•*0-9.)\s]+/, "").trim())
+    .filter(l => l.length > 4);
+  return { quadrant, energy, meaning, actions, raw: block };
 }
 
 function parseSections(raw: string) {
-  const overview = (() => {
-    const m = raw.match(/\*\*ภาพรวม Ikigai Timeline\*\*([\s\S]*?)(?=\*\*|$)/i);
-    return m?.[1]?.trim() ?? "";
-  })();
-  const golden = (() => {
-    const m = raw.match(/\*\*หน้าต่างทองของ 12 เดือนนี้\*\*([\s\S]*?)(?=\*\*|$)/i);
-    return m?.[1]?.trim() ?? "";
-  })();
-  const periods = PERIOD_KEYS.map((key, i) => ({
-    ...PERIOD_META[i],
-    key,
-    data: parsePeriod(raw, key),
+  const overview = extractBlock(raw, "ภาพรวม Ikigai Timeline");
+  const golden   = extractBlock(raw, "หน้าต่างทองของ 12 เดือนนี้") ||
+                   extractBlock(raw, "หน้าต่างทอง");
+  const periods = PERIOD_META.map(p => ({
+    ...p,
+    data: parsePeriod(raw, p.keyword),
   }));
   return { overview, golden, periods };
 }
@@ -241,6 +247,14 @@ export default function TimelinePage() {
                         <span style={{ color: activePeriod.color }}>→</span>
                         <span>{a}</span>
                       </div>
+                    ))}
+                  </div>
+                )}
+                {/* Fallback: แสดง raw block ถ้า parse sub-fields ไม่ได้ */}
+                {!activePeriod.data.meaning && activePeriod.data.actions.length === 0 && activePeriod.data.raw && (
+                  <div className="timeline-raw">
+                    {activePeriod.data.raw.split("\n").filter(l => l.trim()).map((line, i) => (
+                      <p key={i}>{line.replace(/\*\*/g, "")}</p>
                     ))}
                   </div>
                 )}

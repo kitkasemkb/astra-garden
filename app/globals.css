@@ -2234,6 +2234,8 @@ body::after {
   font-size: clamp(13px,2vw,14px);
   color: var(--star-mid);
 }
+.timeline-raw { display: flex; flex-direction: column; gap: 6px; }
+.timeline-raw p { margin: 0; font-size: clamp(13px,2vw,15px); color: var(--star-mid); line-height: 1.75; }
 
 .timeline-strip {
   display: flex;
