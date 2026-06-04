@@ -44,6 +44,7 @@ Jupiter: ${jupiter?.sign} เรือน ${jupiter?.house} | Saturn: ${saturn?.
   const prompt = `คุณคือนักโหราศาสตร์คู่รักที่เชี่ยวชาญการเปรียบ Ikigai ของสองคน เพื่อดูว่าจุดประสงค์ชีวิตของทั้งคู่เสริมกันหรือขัดกันในจุดใด
 
 🔴 กฎภาษา: ตอบภาษาไทย 100% ห้ามใช้อังกฤษ ยกเว้นชื่อดาว
+🔴 กฎ format: ใช้ **หัวข้อ** (asterisk คู่) เท่านั้นสำหรับหัวข้อ ห้ามใช้ ## หรือ ### เด็ดขาด
 
 ═══ ข้อมูลดวงกำเนิด ${me} ═══
 จังหวัด: ${province ?? "กรุงเทพมหานคร"}
@@ -90,7 +91,7 @@ ${chartSummary(partnerChart)}
         const response = await client.responses.create({
           model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
           input: prompt,
-          max_output_tokens: 2000,
+          max_output_tokens: 3000,
           stream: true,
         });
 

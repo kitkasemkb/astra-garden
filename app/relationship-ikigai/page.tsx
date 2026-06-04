@@ -11,11 +11,19 @@ const HOURS   = Array.from({length:24},(_,i)=>i);
 const MINUTES = Array.from({length:60},(_,i)=>i);
 const YEARS_BE = Array.from({length:90},(_,i)=>2568-i);
 
+// normalize ## headers → **headers** แล้วหา section
+function normalizeHeaders(raw: string): string {
+  return raw.replace(/^#{1,3}\s+(.+)$/gm, "**$1**");
+}
+
 function parseSection(raw: string, title: string) {
+  const normalized = normalizeHeaders(raw);
+  const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // match **title** หรือ title ที่ขึ้นต้น section (loose)
   const pattern = new RegExp(
-    `\\*\\*${title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\*\\*([\\s\\S]*?)(?=\\*\\*|$)`, "i"
+    `\\*\\*[^*]*${escaped}[^*]*\\*\\*([\\s\\S]*?)(?=\\*\\*[^*]+\\*\\*|$)`, "i"
   );
-  return raw.match(pattern)?.[1]?.trim() ?? "";
+  return normalized.match(pattern)?.[1]?.trim().replace(/\*\*/g, "") ?? "";
 }
 
 export default function RelationshipIkigaiPage() {

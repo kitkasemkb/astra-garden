@@ -12,17 +12,23 @@ const PERIOD_META = [
   { label: "12 เดือน", short: "+12M", color: "#f472b6" },
 ];
 
-// แยก raw text ออกเป็น sections โดยใช้ ** headers เป็นตัวคั่น
+// แยก raw text ออกเป็น sections — รองรับทั้ง **Header** และ ## Header
 function splitSections(raw: string): { title: string; body: string }[] {
-  const parts = raw.split(/\*\*([^*]+)\*\*/);
+  // normalize: แปลง ## Header เป็น **Header** ก่อน
+  const normalized = raw
+    .replace(/^#{1,3}\s+(.+)$/gm, "**$1**")
+    .replace(/\*\*\s*\*\*/g, ""); // ลบ ** ซ้อนกัน
+  const parts = normalized.split(/\*\*([^*\n]+)\*\*/);
   const result: { title: string; body: string }[] = [];
   for (let i = 1; i < parts.length; i += 2) {
-    result.push({ title: parts[i].trim(), body: (parts[i + 1] ?? "").trim() });
+    const title = parts[i].trim();
+    const body  = (parts[i + 1] ?? "").trim();
+    if (title) result.push({ title, body });
   }
   return result;
 }
 
-// หา section ที่มี keyword อยู่ใน title
+// หา section ที่มี keyword อยู่ใน title (case-insensitive)
 function findSection(sections: { title: string; body: string }[], keyword: string) {
   return sections.find(s => s.title.includes(keyword)) ?? null;
 }
@@ -31,9 +37,9 @@ function parseSections(raw: string) {
   const sections = splitSections(raw);
   const overviewSec = findSection(sections, "ภาพรวม");
   const goldenSec   = findSection(sections, "หน้าต่างทอง");
+  const periodKeywords = ["ตอนนี้", "1 เดือน", "3 เดือน", "6 เดือน", "12 เดือน"];
   const periods = PERIOD_META.map((p, i) => {
-    const keywords = ["ตอนนี้", "1 เดือน", "3 เดือน", "6 เดือน", "12 เดือน"];
-    const sec = findSection(sections, keywords[i]);
+    const sec = findSection(sections, periodKeywords[i]);
     return { ...p, body: sec?.body ?? "" };
   });
   return {
