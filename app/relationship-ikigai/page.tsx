@@ -11,19 +11,40 @@ const HOURS   = Array.from({length:24},(_,i)=>i);
 const MINUTES = Array.from({length:60},(_,i)=>i);
 const YEARS_BE = Array.from({length:90},(_,i)=>2568-i);
 
-// normalize ## headers → **headers** แล้วหา section
-function normalizeHeaders(raw: string): string {
-  return raw.replace(/^#{1,3}\s+(.+)$/gm, "**$1**");
+// แปลง raw text เป็น map ของ title → body (ใช้ logic เดียวกับ timeline)
+function buildSectionMap(raw: string): Map<string, string> {
+  const marked = raw
+    .replace(/^#{1,3}\s+(.+)$/gm, "@@HDR@@$1@@END@@")
+    .replace(/^\*\*([^*\n]{2,60})\*\*\s*$/gm, "@@HDR@@$1@@END@@");
+
+  const map = new Map<string, string>();
+  const headerPattern = /@@HDR@@([^@]+)@@END@@/g;
+  let lastIndex = 0;
+  let lastTitle = "";
+  let match: RegExpExecArray | null;
+
+  while ((match = headerPattern.exec(marked)) !== null) {
+    if (lastTitle) {
+      map.set(lastTitle.trim(), marked.slice(lastIndex, match.index)
+        .replace(/@@HDR@@[^@]+@@END@@/g, "").replace(/\*\*/g, "").trim());
+    }
+    lastTitle = match[1].trim();
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastTitle) {
+    map.set(lastTitle.trim(), marked.slice(lastIndex)
+      .replace(/@@HDR@@[^@]+@@END@@/g, "").replace(/\*\*/g, "").trim());
+  }
+  return map;
 }
 
 function parseSection(raw: string, title: string) {
-  const normalized = normalizeHeaders(raw);
-  const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  // match **title** หรือ title ที่ขึ้นต้น section (loose)
-  const pattern = new RegExp(
-    `\\*\\*[^*]*${escaped}[^*]*\\*\\*([\\s\\S]*?)(?=\\*\\*[^*]+\\*\\*|$)`, "i"
-  );
-  return normalized.match(pattern)?.[1]?.trim().replace(/\*\*/g, "") ?? "";
+  const map = buildSectionMap(raw);
+  // หา key ที่มี title อยู่ (loose match)
+  for (const [key, body] of map) {
+    if (key.includes(title) || title.includes(key)) return body;
+  }
+  return "";
 }
 
 export default function RelationshipIkigaiPage() {

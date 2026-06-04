@@ -12,23 +12,40 @@ const PERIOD_META = [
   { label: "12 เดือน", short: "+12M", color: "#f472b6" },
 ];
 
-// แยก raw text ออกเป็น sections — รองรับทั้ง **Header** และ ## Header
+// แยก raw text เป็น sections
+// นับเฉพาะ header ที่อยู่ต้นบรรทัด: ## ... หรือ **...** ทั้งบรรทัด
 function splitSections(raw: string): { title: string; body: string }[] {
-  // normalize: แปลง ## Header เป็น **Header** ก่อน
-  const normalized = raw
-    .replace(/^#{1,3}\s+(.+)$/gm, "**$1**")
-    .replace(/\*\*\s*\*\*/g, ""); // ลบ ** ซ้อนกัน
-  const parts = normalized.split(/\*\*([^*\n]+)\*\*/);
+  // แปลง ## Header → @@HEADER@@Title@@ENDHEADER@@ เพื่อ mark ก่อน
+  const marked = raw
+    .replace(/^#{1,3}\s+(.+)$/gm, "@@HDR@@$1@@END@@")
+    // **Title** ที่อยู่ต้นบรรทัดคนเดียว (ไม่มีข้อความอื่นในบรรทัดเดียวกัน)
+    .replace(/^\*\*([^*\n]{2,60})\*\*\s*$/gm, "@@HDR@@$1@@END@@");
+
   const result: { title: string; body: string }[] = [];
-  for (let i = 1; i < parts.length; i += 2) {
-    const title = parts[i].trim();
-    const body  = (parts[i + 1] ?? "").trim();
-    if (title) result.push({ title, body });
+  const headerPattern = /@@HDR@@([^@]+)@@END@@/g;
+  let lastIndex = 0;
+  let lastTitle = "";
+  let match: RegExpExecArray | null;
+
+  while ((match = headerPattern.exec(marked)) !== null) {
+    if (lastTitle) {
+      result.push({
+        title: lastTitle,
+        body: marked.slice(lastIndex, match.index).replace(/@@HDR@@[^@]+@@END@@/g, "").trim(),
+      });
+    }
+    lastTitle = match[1].trim();
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastTitle) {
+    result.push({
+      title: lastTitle,
+      body: marked.slice(lastIndex).replace(/@@HDR@@[^@]+@@END@@/g, "").trim(),
+    });
   }
   return result;
 }
 
-// หา section ที่มี keyword อยู่ใน title (case-insensitive)
 function findSection(sections: { title: string; body: string }[], keyword: string) {
   return sections.find(s => s.title.includes(keyword)) ?? null;
 }
