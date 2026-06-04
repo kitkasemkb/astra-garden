@@ -5,85 +5,42 @@ import { createClient } from "@/lib/supabase";
 import UserMenu from "@/components/UserMenu";
 
 const PERIOD_META = [
-  { label: "ตอนนี้",   short: "Now",  color: "#5dcfff", keyword: "ตอนนี้" },
-  { label: "1 เดือน",  short: "+1M",  color: "#a78bfa", keyword: "1 เดือนข้างหน้า" },
-  { label: "3 เดือน",  short: "+3M",  color: "#34d399", keyword: "3 เดือนข้างหน้า" },
-  { label: "6 เดือน",  short: "+6M",  color: "#fbbf24", keyword: "6 เดือนข้างหน้า" },
-  { label: "12 เดือน", short: "+12M", color: "#f472b6", keyword: "12 เดือนข้างหน้า" },
+  { label: "ตอนนี้",   short: "Now",  color: "#5dcfff" },
+  { label: "1 เดือน",  short: "+1M",  color: "#a78bfa" },
+  { label: "3 เดือน",  short: "+3M",  color: "#34d399" },
+  { label: "6 เดือน",  short: "+6M",  color: "#fbbf24" },
+  { label: "12 เดือน", short: "+12M", color: "#f472b6" },
 ];
 
-const QUADRANT_COLOR: Record<string, string> = {
-  "สิ่งที่รัก": "#f472b6",
-  "เชี่ยวชาญ":  "#a78bfa",
-  "โลกต้องการ": "#34d399",
-  "มีรายได้":   "#fbbf24",
-};
-
-const ENERGY_COLOR: Record<string, string> = {
-  harmonious: "#34d399",
-  challenging: "#f87171",
-  mixed: "#fbbf24",
-};
-
-type PeriodData = {
-  quadrant: string;
-  energy: string;
-  meaning: string;
-  actions: string[];
-  raw: string;
-};
-
-// ดึง block ระหว่าง ** headers — ใช้ keyword แบบ loose ไม่ต้องตรงทั้งหมด
-function extractBlock(raw: string, keyword: string): string {
-  // หา **...keyword...**  แบบ lookahead ถึง ** ถัดไป
-  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const pattern = new RegExp(
-    `\\*\\*[^*]*${escaped}[^*]*\\*\\*([\\s\\S]*?)(?=\\*\\*[^*]+\\*\\*|$)`, "i"
-  );
-  return raw.match(pattern)?.[1]?.trim() ?? "";
+// แยก raw text ออกเป็น sections โดยใช้ ** headers เป็นตัวคั่น
+function splitSections(raw: string): { title: string; body: string }[] {
+  const parts = raw.split(/\*\*([^*]+)\*\*/);
+  const result: { title: string; body: string }[] = [];
+  for (let i = 1; i < parts.length; i += 2) {
+    result.push({ title: parts[i].trim(), body: (parts[i + 1] ?? "").trim() });
+  }
+  return result;
 }
 
-function extractField(block: string, label: string): string {
-  // รองรับ : หรือ ： และ bold (**label**:)
-  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const m = block.match(new RegExp(`(?:\\*\\*)?${escaped}(?:\\*\\*)?\\s*[:：]\\s*([^\\n]+)`, "i"));
-  return m?.[1]?.replace(/\*\*/g, "").trim() ?? "";
-}
-
-function extractMultiline(block: string, label: string, stopLabel?: string): string {
-  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const stopEscaped = stopLabel ? stopLabel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") : null;
-  const stopPart = stopEscaped ? `(?=(?:\\*\\*)?${stopEscaped}|$)` : "(?=$)";
-  const pattern = new RegExp(
-    `(?:\\*\\*)?${escaped}(?:\\*\\*)?\\s*[:：]\\s*([\\s\\S]*?)${stopPart}`, "i"
-  );
-  return block.match(pattern)?.[1]?.replace(/\*\*/g, "").trim() ?? "";
-}
-
-function parsePeriod(raw: string, keyword: string): PeriodData {
-  const block = extractBlock(raw, keyword);
-  const quadrant = extractField(block, "วง Ikigai ที่เปิดอยู่") ||
-                   extractField(block, "วง Ikigai") ||
-                   extractField(block, "Ikigai");
-  const energy   = extractField(block, "พลังงาน");
-  const meaning  = extractMultiline(block, "ความหมาย", "ลงมือทำ");
-  const actionRaw = extractMultiline(block, "ลงมือทำ");
-  const actions  = actionRaw
-    .split("\n")
-    .map(l => l.replace(/^[-•*0-9.)\s]+/, "").trim())
-    .filter(l => l.length > 4);
-  return { quadrant, energy, meaning, actions, raw: block };
+// หา section ที่มี keyword อยู่ใน title
+function findSection(sections: { title: string; body: string }[], keyword: string) {
+  return sections.find(s => s.title.includes(keyword)) ?? null;
 }
 
 function parseSections(raw: string) {
-  const overview = extractBlock(raw, "ภาพรวม Ikigai Timeline");
-  const golden   = extractBlock(raw, "หน้าต่างทองของ 12 เดือนนี้") ||
-                   extractBlock(raw, "หน้าต่างทอง");
-  const periods = PERIOD_META.map(p => ({
-    ...p,
-    data: parsePeriod(raw, p.keyword),
-  }));
-  return { overview, golden, periods };
+  const sections = splitSections(raw);
+  const overviewSec = findSection(sections, "ภาพรวม");
+  const goldenSec   = findSection(sections, "หน้าต่างทอง");
+  const periods = PERIOD_META.map((p, i) => {
+    const keywords = ["ตอนนี้", "1 เดือน", "3 เดือน", "6 เดือน", "12 เดือน"];
+    const sec = findSection(sections, keywords[i]);
+    return { ...p, body: sec?.body ?? "" };
+  });
+  return {
+    overview: overviewSec?.body ?? "",
+    golden:   goldenSec?.body ?? "",
+    periods,
+  };
 }
 
 export default function TimelinePage() {
@@ -145,8 +102,6 @@ export default function TimelinePage() {
 
   const parsed = reading.length > 100 ? parseSections(reading) : null;
   const activePeriod = parsed?.periods[active];
-  const qColor = activePeriod ? (QUADRANT_COLOR[activePeriod.data.quadrant] ?? "var(--aurora)") : "var(--aurora)";
-  const eColor = activePeriod ? (ENERGY_COLOR[activePeriod.data.energy] ?? "var(--aurora)") : "var(--aurora)";
 
   return (
     <main className="premium-shell">
@@ -223,40 +178,26 @@ export default function TimelinePage() {
                   <div className="timeline-period-label" style={{ color: activePeriod.color }}>
                     {activePeriod.label}
                   </div>
-                  <div className="timeline-panel-badges">
-                    {activePeriod.data.quadrant && (
-                      <span className="timeline-badge" style={{ background: qColor + "22", color: qColor, borderColor: qColor }}>
-                        วง: {activePeriod.data.quadrant}
-                      </span>
-                    )}
-                    {activePeriod.data.energy && (
-                      <span className="timeline-badge" style={{ background: eColor + "22", color: eColor, borderColor: eColor }}>
-                        {activePeriod.data.energy}
-                      </span>
-                    )}
-                  </div>
                 </div>
-                {activePeriod.data.meaning && (
-                  <p className="timeline-meaning">{activePeriod.data.meaning}</p>
-                )}
-                {activePeriod.data.actions.length > 0 && (
-                  <div className="timeline-actions">
-                    <span className="career-field-label">ลงมือทำ</span>
-                    {activePeriod.data.actions.map((a, i) => (
-                      <div key={i} className="timeline-action-item">
-                        <span style={{ color: activePeriod.color }}>→</span>
-                        <span>{a}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {/* Fallback: แสดง raw block ถ้า parse sub-fields ไม่ได้ */}
-                {!activePeriod.data.meaning && activePeriod.data.actions.length === 0 && activePeriod.data.raw && (
+                {activePeriod.body ? (
                   <div className="timeline-raw">
-                    {activePeriod.data.raw.split("\n").filter(l => l.trim()).map((line, i) => (
-                      <p key={i}>{line.replace(/\*\*/g, "")}</p>
-                    ))}
+                    {activePeriod.body.split("\n").filter(l => l.trim()).map((line, i) => {
+                      const isAction = /^[-•*]\s|^\d+[.)]\s/.test(line.trim());
+                      const clean = line.replace(/\*\*/g, "").replace(/^[-•*]\s*|^\d+[.)]\s*/,"").trim();
+                      return isAction ? (
+                        <div key={i} className="timeline-action-item">
+                          <span style={{ color: activePeriod.color }}>→</span>
+                          <span>{clean}</span>
+                        </div>
+                      ) : (
+                        <p key={i}>{clean}</p>
+                      );
+                    })}
                   </div>
+                ) : (
+                  <p className="timeline-meaning" style={{ color: "var(--star-dim)", fontStyle: "italic" }}>
+                    กำลังโหลด…
+                  </p>
                 )}
               </div>
             )}
@@ -267,11 +208,6 @@ export default function TimelinePage() {
                 <button key={i} className="timeline-strip-item" onClick={() => setActive(i)}>
                   <div className={`timeline-strip-dot ${active === i ? "active" : ""}`} style={{ background: p.color }} />
                   <span className="timeline-strip-label" style={{ color: active === i ? p.color : "var(--star-dim)" }}>{p.short}</span>
-                  {p.data.quadrant && (
-                    <span className="timeline-strip-quad" style={{ color: QUADRANT_COLOR[p.data.quadrant] ?? "var(--star-dim)" }}>
-                      {p.data.quadrant}
-                    </span>
-                  )}
                   {i < parsed.periods.length - 1 && <div className="timeline-strip-line" />}
                 </button>
               ))}
