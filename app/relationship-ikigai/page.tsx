@@ -3,29 +3,13 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import UserMenu from "@/components/UserMenu";
-
-const SECTION_KEYS = [
-  { key: "Ikigai ของ", isMe: true,     color: "#5dcfff", icon: "✦" },
-  { key: "Ikigai ของ", isMe: false,    color: "#f472b6", icon: "♥" },
-  { key: "จุดที่เสริมกัน",             color: "#34d399", icon: "◎" },
-  { key: "จุดที่อาจขัดกัน",            color: "#f87171", icon: "⚡" },
-  { key: "พลังของคู่นี้เมื่ออยู่ด้วยกัน", color: "#a78bfa", icon: "✧" },
-  { key: "วิธีเดินทางสู่ Ikigai ร่วมกัน", color: "#fbbf24", icon: "→" },
-  { key: "ข้อความจากดวงดาวถึงคู่นี้",   color: "#e2e8f0", icon: "★" },
-] as const;
+import BirthLocationPicker from "@/components/BirthLocationPicker";
 
 const MONTHS_TH = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
-const DAYS  = Array.from({length:31},(_,i)=>i+1);
-const HOURS = Array.from({length:24},(_,i)=>i);
+const DAYS    = Array.from({length:31},(_,i)=>i+1);
+const HOURS   = Array.from({length:24},(_,i)=>i);
 const MINUTES = Array.from({length:60},(_,i)=>i);
 const YEARS_BE = Array.from({length:90},(_,i)=>2568-i);
-
-const provincePresets = [
-  {name:"กรุงเทพมหานคร",lat:13.7563,lon:100.5018},{name:"เชียงใหม่",lat:18.7883,lon:98.9853},
-  {name:"ภูเก็ต",lat:7.8804,lon:98.3923},{name:"ขอนแก่น",lat:16.4419,lon:102.835},
-  {name:"นครราชสีมา",lat:14.9799,lon:102.0977},{name:"สงขลา",lat:7.1898,lon:100.5951},
-  {name:"อุดรธานี",lat:17.4138,lon:102.7872},{name:"เชียงราย",lat:19.9105,lon:99.8406},
-];
 
 function parseSection(raw: string, title: string) {
   const pattern = new RegExp(
@@ -51,7 +35,9 @@ export default function RelationshipIkigaiPage() {
   const [partnerYearBE, setPartnerYearBE]     = useState("");
   const [partnerHour, setPartnerHour]         = useState("");
   const [partnerMinute, setPartnerMinute]     = useState("");
+  const [partnerCountry, setPartnerCountry]   = useState("Thailand");
   const [partnerProvince, setPartnerProvince] = useState("กรุงเทพมหานคร");
+  const [partnerCity, setPartnerCity]         = useState("");
   const [partnerLat, setPartnerLat]           = useState(13.7563);
   const [partnerLon, setPartnerLon]           = useState(100.5018);
 
@@ -209,16 +195,18 @@ export default function RelationshipIkigaiPage() {
               </label>
             </div>
 
-            <label className="lux-field" style={{marginBottom:20}}>
-              <span>จังหวัดเกิด</span>
-              <select value={partnerProvince} onChange={e => {
-                const p = provincePresets.find(x => x.name === e.target.value);
-                setPartnerProvince(e.target.value);
-                if (p) { setPartnerLat(p.lat); setPartnerLon(p.lon); }
-              }}>
-                {provincePresets.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
-              </select>
-            </label>
+            <BirthLocationPicker
+              country={partnerCountry}
+              province={partnerProvince}
+              city={partnerCity}
+              lat={partnerLat}
+              lon={partnerLon}
+              onChangeCountry={setPartnerCountry}
+              onChangeProvince={setPartnerProvince}
+              onChangeCity={setPartnerCity}
+              onChangeLat={setPartnerLat}
+              onChangeLon={setPartnerLon}
+            />
 
             <button className="luxury-button" onClick={analyse} disabled={!canSubmit} style={{width:"100%"}}>
               วิเคราะห์ Ikigai ร่วมกัน →
