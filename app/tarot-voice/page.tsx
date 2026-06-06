@@ -48,24 +48,18 @@ export default function TarotVoicePage() {
   ];
 
   const conversation = useConversation({
+    clientTools: {
+      reveal_card: ({ position }: { position: number }) => {
+        setRevealedCount(prev => Math.max(prev, position));
+        return `Card ${position} revealed`;
+      },
+    },
     onConnect: () => {
       setStatusText("เชื่อมต่อแล้ว กำลังรอ Astra...");
     },
     onDisconnect: () => {
       setStatusText("สิ้นสุดการสนทนา");
       setSessionStarted(false);
-    },
-    onMessage: (msg: unknown) => {
-      const raw = msg as { message?: string; source?: string };
-      if (raw?.source !== "ai" || !raw?.message) return;
-      const text = raw.message;
-
-      for (const { pattern, card } of POSITION_MAP) {
-        if (pattern.test(text)) {
-          setRevealedCount(prev => Math.max(prev, card));
-          break;
-        }
-      }
     },
     onError: (err: unknown) => {
       console.error("ElevenLabs error:", err);
