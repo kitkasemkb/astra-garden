@@ -68,13 +68,13 @@ ${aspectLines}
 ใช้ภาษาไทย กระชับ ไม่ใช้ศัพท์เทคนิคโหราศาสตร์มากเกินไป`;
 
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-      const message = await openai.chat.completions.create({
-        model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-        max_tokens: 300,
-        messages: [{ role: "user", content: prompt }],
+      const message = await openai.responses.create({
+        model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
+        input: prompt,
+        max_output_tokens: 300,
       });
 
-      const advice = message.choices[0]?.message?.content ?? "";
+      const advice = message.output_text ?? "";
 
       return NextResponse.json({ score, color, aspects: report.aspects, advice });
     }
