@@ -11,7 +11,7 @@ const QUADRANT_KEYS = [
   "สิ่งที่ทำแล้วมีรายได้",
   "Ikigai ของคุณ",
   "เส้นทางสู่ Ikigai",
-  "คำทำนายจากดวงดาว",
+  "มุมมองจากดวงดาว",
 ] as const;
 
 const QUADRANT_META: Record<string, { color: string; accent: string; icon: string; eng: string }> = {
@@ -21,7 +21,7 @@ const QUADRANT_META: Record<string, { color: string; accent: string; icon: strin
   "สิ่งที่ทำแล้วมีรายได้":   { color: "#fbbf24", accent: "rgba(251,191,36,.15)",  icon: "◉", eng: "What You Can Be Paid For" },
   "Ikigai ของคุณ":            { color: "#5dcfff", accent: "rgba(93,207,255,.18)",  icon: "✧", eng: "Your Ikigai" },
   "เส้นทางสู่ Ikigai":        { color: "#b89dfc", accent: "rgba(184,157,252,.15)", icon: "→", eng: "Path to Ikigai" },
-  "คำทำนายจากดวงดาว":         { color: "#e2e8f0", accent: "rgba(255,255,255,.08)", icon: "★", eng: "Star Prophecy" },
+  "มุมมองจากดวงดาว":           { color: "#e2e8f0", accent: "rgba(255,255,255,.08)", icon: "★", eng: "Star Perspective" },
 };
 
 function parseSections(raw: string) {
@@ -114,7 +114,7 @@ export default function IkigaiPage() {
   const coreSection  = sections.find(s => s.title === "Ikigai ของคุณ");
   const quadrants    = sections.filter(s => ["สิ่งที่คุณรัก","สิ่งที่คุณเชี่ยวชาญ","สิ่งที่โลกต้องการ","สิ่งที่ทำแล้วมีรายได้"].includes(s.title));
   const pathSection  = sections.find(s => s.title === "เส้นทางสู่ Ikigai");
-  const starSection  = sections.find(s => s.title === "คำทำนายจากดวงดาว");
+  const starSection  = sections.find(s => s.title === "มุมมองจากดวงดาว");
 
   return (
     <main className="premium-shell">

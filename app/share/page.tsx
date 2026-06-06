@@ -5,7 +5,7 @@ import { IconCrystalBall } from "@/components/AstraIcons";
 
 function ShareContent() {
   const params = useSearchParams();
-  const topic    = params.get("topic") || "การดูดวง";
+  const topic    = params.get("topic") || "รายงาน";
   const category = params.get("category") || "ชีวิตทั่วไป";
   const asc      = params.get("asc") || "";
   const mc       = params.get("mc") || "";
@@ -43,7 +43,7 @@ function ShareContent() {
         </div>
         <footer className="share-card-footer">
           <span>astra-garden.vercel.app</span>
-          <span style={{display:"inline-flex",alignItems:"center",gap:6}}><IconCrystalBall size={14}/> ดูดวงดาวของคุณ</span>
+          <span style={{display:"inline-flex",alignItems:"center",gap:6}}><IconCrystalBall size={14}/> รับคำแนะนำจากดวงดาว</span>
         </footer>
       </div>
       <div className="share-actions">
@@ -57,7 +57,7 @@ function ShareContent() {
           📋 คัดลอกลิงก์
         </button>
         <a href="/" className="ghost-button" style={{ textDecoration:"none", display:"inline-flex", alignItems:"center" }}>
-          ดูดวงใหม่
+          รับคำแนะนำใหม่
         </a>
       </div>
     </div>

@@ -79,7 +79,7 @@ export default function UserMenu() {
         <IconStar size={16} /> {isPro ? "จัดการแผน" : "อัปเกรด Pro"}
       </a>
       <a href="/history" className="user-dropdown-item" onClick={() => setOpen(false)}>
-        <IconHistory size={16} /> ประวัติการดูดวง
+        <IconHistory size={16} /> ประวัติรายงาน
       </a>
       <a href="/horoscope" className="user-dropdown-item" onClick={() => setOpen(false)}>
         <IconStar size={16} /> Daily Briefing

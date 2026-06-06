@@ -215,7 +215,7 @@ export default function TarotPage() {
             <div className="panel-heading">
               <span>Set your intention</span>
               <h2>ตั้งจิตก่อนเปิดไพ่</h2>
-              <p>ความชัดเจนของคำถามคือกุญแจสู่การทำนายที่แม่นยำ</p>
+              <p>ความชัดเจนของคำถามคือกุญแจสู่การวิเคราะห์ที่ตรงจุด</p>
             </div>
 
             <div className="tarot-cat-grid">
@@ -336,7 +336,7 @@ export default function TarotPage() {
           <div className="tarot-interpretation" ref={interpretRef}>
             <div className="report-opener">
               <span>AI Interpretation · Celtic Cross</span>
-              <h2>คำทำนายจากไพ่</h2>
+              <h2>คำแนะนำจากไพ่</h2>
               <p>คลิกที่ไพ่แต่ละใบเพื่อดูความหมายโดยละเอียด</p>
             </div>
 
@@ -363,7 +363,7 @@ export default function TarotPage() {
               <div className="tarot-actions">
                 <button className="ghost-button" onClick={reset}>เปิดไพ่ใหม่</button>
                 <a href="/" className="luxury-button" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
-                  ดูดวงดาว →
+                  รับคำแนะนำจากดวง →
                 </a>
               </div>
             )}

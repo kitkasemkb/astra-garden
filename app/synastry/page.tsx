@@ -244,7 +244,7 @@ export default function SynastryPage() {
         )}
       </div>
 
-      <footer className="legal-line">คำทำนายนี้เป็นมุมมองประกอบ ไม่ใช่การรับประกันความสัมพันธ์</footer>
+      <footer className="legal-line">คำแนะนำนี้เป็นมุมมองประกอบ ไม่ใช่การรับประกันความสัมพันธ์</footer>
     </main>
   );
 }

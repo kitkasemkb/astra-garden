@@ -64,7 +64,7 @@ export default function HistoryPage() {
           </span>
         </a>
         <div className="topbar-right">
-          <div className="topbar-meta"><span>ประวัติการดูดวง</span></div>
+          <div className="topbar-meta"><span>ประวัติรายงาน</span></div>
           <UserMenu />
         </div>
       </header>
@@ -74,7 +74,7 @@ export default function HistoryPage() {
         <aside className="history-sidebar">
           <div className="history-sidebar-header">
             <span className="kicker">Reading History</span>
-            <h2>การดูดวงของคุณ</h2>
+            <h2>รายงานของคุณ</h2>
             {user && <p>{user.display_name || user.email}</p>}
           </div>
 
@@ -83,8 +83,8 @@ export default function HistoryPage() {
           {!loading && readings.length === 0 && (
             <div className="history-empty">
               <span><IconCrystalBall size={40}/></span>
-              <p>ยังไม่มีประวัติการดูดวง<br/>เริ่มอ่านดวงแล้วบันทึกได้เลย</p>
-              <a href="/" className="luxury-button" style={{textDecoration:"none",display:"inline-block",marginTop:12}}>เริ่มดูดวง</a>
+              <p>ยังไม่มีประวัติรายงาน<br/>เริ่มรับคำแนะนำแล้วบันทึกได้เลย</p>
+              <a href="/" className="luxury-button" style={{textDecoration:"none",display:"inline-block",marginTop:12}}>เริ่มรับคำแนะนำ</a>
             </div>
           )}
 
@@ -99,7 +99,7 @@ export default function HistoryPage() {
                   {CATEGORY_ICON[r.category || r.type] || <IconGalaxy size={18}/>}
                 </span>
                 <div className="history-item-info">
-                  <strong>{r.topic || (r.type === "tarot" ? "ไพ่ทาโร่" : "ดูดวง")}</strong>
+                  <strong>{r.topic || (r.type === "tarot" ? "ไพ่ทาโร่" : "รายงาน")}</strong>
                   <small>{formatDate(r.created_at)}</small>
                 </div>
                 <span className="history-type-badge">{r.type === "tarot" ? <IconCrystalBall size={13}/> : <IconStar size={13}/>}</span>
@@ -113,7 +113,7 @@ export default function HistoryPage() {
           {!selected && (
             <div className="history-detail-empty">
               <span><IconHistory size={40}/></span>
-              <p>เลือกการดูดวงจากรายการเพื่อดูรายละเอียด</p>
+              <p>เลือกรายงานจากรายการเพื่อดูรายละเอียด</p>
             </div>
           )}
           {selected && (
@@ -121,12 +121,12 @@ export default function HistoryPage() {
               <div className="history-detail-header">
                 <div>
                   <span className="kicker">{selected.type === "tarot" ? "ไพ่ทาโร่" : "โหราศาสตร์"}</span>
-                  <h2>{selected.topic || "การดูดวง"}</h2>
+                  <h2>{selected.topic || "รายงาน"}</h2>
                   <p className="history-date">{formatDate(selected.created_at)}</p>
                 </div>
                 <button
                   className="history-delete-btn"
-                  onClick={() => { if (confirm("ลบการดูดวงนี้?")) deleteReading(selected.id); }}
+                  onClick={() => { if (confirm("ลบรายงานนี้?")) deleteReading(selected.id); }}
                 >
                   🗑️
                 </button>
@@ -152,7 +152,7 @@ export default function HistoryPage() {
 
               <div className="history-actions">
                 <button className="luxury-button" onClick={() => window.location.href = "/"}>
-                  ดูดวงใหม่
+                  รับคำแนะนำใหม่
                 </button>
               </div>
             </div>
@@ -161,7 +161,7 @@ export default function HistoryPage() {
       </div>
 
       <footer className="legal-line">
-        ประวัติการดูดวงบันทึกไว้สำหรับตัวคุณเท่านั้น ไม่แชร์กับผู้อื่น
+        รายงานบันทึกไว้สำหรับตัวคุณเท่านั้น ไม่แชร์กับผู้อื่น
       </footer>
     </main>
   );
