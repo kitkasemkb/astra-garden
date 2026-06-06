@@ -60,23 +60,41 @@ ${aspectLines}
 
 คะแนนรวม: ${score} (${color === "good" ? "วันดี" : color === "caution" ? "ควรระวัง" : "ปานกลาง"})
 
-ให้คำแนะนำสั้นๆ 3-4 ประโยค:
-1. บอกว่าวันนี้พลังงานโดยรวมเป็นอย่างไรสำหรับเรื่องที่เลือก
-2. สิ่งที่ควรทำหรือหลีกเลี่ยง
-3. คำแนะนำที่นำไปปฏิบัติได้จริง
+ตอบเป็น JSON ตามโครงสร้างนี้เท่านั้น ห้ามมีข้อความอื่นนอก JSON:
+{
+  "advice": "คำแนะนำภาพรวม 2-3 ประโยค บอกพลังงานวันนี้และสิ่งที่ควรทำหรือหลีกเลี่ยง",
+  "timeSlots": [
+    { "time": "06:00–09:00", "icon": "🌅", "label": "ช่วงเช้าตรู่", "activity": "เหมาะทำอะไร 1 ประโยค", "energy": "good" },
+    { "time": "09:00–12:00", "icon": "☀️", "label": "ช่วงเช้า", "activity": "เหมาะทำอะไร 1 ประโยค", "energy": "good" },
+    { "time": "12:00–15:00", "icon": "🌤", "label": "ช่วงบ่าย", "activity": "เหมาะทำอะไร 1 ประโยค", "energy": "mixed" },
+    { "time": "15:00–18:00", "icon": "🌇", "label": "ช่วงเย็น", "activity": "เหมาะทำอะไร 1 ประโยค", "energy": "mixed" },
+    { "time": "18:00–22:00", "icon": "🌙", "label": "ช่วงค่ำ", "activity": "เหมาะทำอะไร 1 ประโยค", "energy": "good" }
+  ]
+}
 
-ใช้ภาษาไทย กระชับ ไม่ใช้ศัพท์เทคนิคโหราศาสตร์มากเกินไป`;
+energy ของแต่ละช่วงให้ใช้ "good", "mixed", หรือ "caution" ตามพลังงานจริงของช่วงนั้น
+ใช้ภาษาไทย กระชับ ไม่ใช้ศัพท์เทคนิคโหราศาสตร์`;
 
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const message = await openai.responses.create({
         model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
         input: prompt,
-        max_output_tokens: 300,
+        max_output_tokens: 600,
       });
 
-      const advice = message.output_text ?? "";
+      let advice = "";
+      let timeSlots: unknown[] = [];
+      try {
+        const raw = (message.output_text ?? "").trim();
+        const jsonStr = raw.startsWith("{") ? raw : raw.slice(raw.indexOf("{"));
+        const parsed = JSON.parse(jsonStr);
+        advice = parsed.advice ?? "";
+        timeSlots = parsed.timeSlots ?? [];
+      } catch {
+        advice = message.output_text ?? "";
+      }
 
-      return NextResponse.json({ score, color, aspects: report.aspects, advice });
+      return NextResponse.json({ score, color, aspects: report.aspects, advice, timeSlots });
     }
 
     // mode: month — คำนวณทุกวันในเดือนปัจจุบัน

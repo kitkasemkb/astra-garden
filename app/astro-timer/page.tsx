@@ -10,11 +10,20 @@ type DayScore = {
   topAspect: string | null;
 };
 
+type TimeSlot = {
+  time: string;
+  icon: string;
+  label: string;
+  activity: string;
+  energy: "good" | "mixed" | "caution";
+};
+
 type DayDetail = {
   score: number;
   color: "good" | "mixed" | "caution";
   aspects: { transitPlanet: string; natalPlanet: string; type: string; energy: string; meaningTh: string }[];
   advice: string;
+  timeSlots: TimeSlot[];
 };
 
 const CATEGORIES = [
@@ -303,6 +312,46 @@ export default function AstroTimerPage() {
                         }}>
                           {detail.advice}
                         </div>
+
+                        {/* Time Slots */}
+                        {(detail.timeSlots ?? []).length > 0 && (
+                          <div style={{ marginBottom: 20 }}>
+                            <span className="rail-label">เวลาที่ดีในวันนี้</span>
+                            <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
+                              {detail.timeSlots.map((slot, i) => (
+                                <div key={i} style={{
+                                  display: "flex", alignItems: "center", gap: 12,
+                                  padding: "10px 14px",
+                                  borderRadius: 10,
+                                  background: slot.energy === "good"
+                                    ? "rgba(74,222,128,.08)"
+                                    : slot.energy === "caution"
+                                    ? "rgba(248,113,113,.08)"
+                                    : "rgba(251,191,36,.06)",
+                                  border: `1px solid ${slot.energy === "good"
+                                    ? "rgba(74,222,128,.2)"
+                                    : slot.energy === "caution"
+                                    ? "rgba(248,113,113,.2)"
+                                    : "rgba(251,191,36,.15)"}`,
+                                }}>
+                                  <span style={{ fontSize: 20, flexShrink: 0 }}>{slot.icon}</span>
+                                  <div style={{ flex: 1 }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                                      <span style={{ fontSize: 11, color: "var(--star-dim)", fontFamily: "monospace" }}>{slot.time}</span>
+                                      <span style={{ fontSize: 11, color: "var(--star-dim)" }}>·</span>
+                                      <span style={{ fontSize: 12, color: "var(--star-mid)", fontWeight: 600 }}>{slot.label}</span>
+                                    </div>
+                                    <span style={{ fontSize: 13, color: "var(--star-mid)" }}>{slot.activity}</span>
+                                  </div>
+                                  <div style={{
+                                    width: 6, height: 6, borderRadius: "50%", flexShrink: 0,
+                                    background: slot.energy === "good" ? "#4ade80" : slot.energy === "caution" ? "#f87171" : "#fbbf24",
+                                  }} />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
                         {/* Aspects */}
                         <div>
