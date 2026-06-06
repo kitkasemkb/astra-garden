@@ -42,12 +42,32 @@ export default function TarotVoicePage() {
       setStatusText("สิ้นสุดการสนทนา");
       setSessionStarted(false);
     },
-    onMessage: ({ message }: { message: unknown }) => {
-      if (!message) return;
-      const text = typeof message === "string" ? message : (message as { text?: string }).text ?? "";
-      const cardMatches = text.match(/ไพ่(?:ใบ)?ที่?\s*(\d+)/g);
-      if (cardMatches) {
-        setRevealedCount(prev => Math.min(prev + cardMatches.length, 10));
+    onMessage: (msg: unknown) => {
+      // @11labs/react ส่งมาเป็น { message: string, source: 'ai'|'user' }
+      const raw = msg as { message?: string; source?: string };
+      if (raw?.source !== "ai" || !raw?.message) return;
+      const text = raw.message;
+
+      // keyword patterns ที่ AI ใช้เมื่อจะเปิดไพ่แต่ละใบ
+      const CARD_TRIGGERS = [
+        /เปิดไพ่ใบ(?:แรก|ที่?\s*(?:หนึ่ง|1))/,
+        /ไพ่ใบ(?:แรก|ที่?\s*(?:หนึ่ง|1))/,
+        /สถานการณ์ปัจจุบัน/,
+        /สิ่งที่ขัดขวาง/,
+        /จิตใต้สำนึก/,
+        /อดีต(?:ที่ผ่านมา)?/,
+        /ความเป็นไปได้/,
+        /อนาคต(?:ใกล้)?/,
+        /ตัวคุณเอง/,
+        /สิ่งแวดล้อม/,
+        /ความหวัง|ความกลัว/,
+        /ผลลัพธ์(?:สุดท้าย)?/,
+      ];
+
+      // นับว่า AI พูดถึงตำแหน่งไพ่กี่ตำแหน่งในข้อความนี้
+      const triggered = CARD_TRIGGERS.filter(p => p.test(text)).length;
+      if (triggered > 0) {
+        setRevealedCount(prev => Math.min(prev + 1, 10));
       }
     },
     onError: (err: unknown) => {
