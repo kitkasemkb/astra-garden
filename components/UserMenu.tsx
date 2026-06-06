@@ -81,6 +81,9 @@ export default function UserMenu() {
       <a href="/tarot-voice" className="user-dropdown-item" onClick={() => setOpen(false)}>
         <IconCrystalBall size={16} /> Voice Tarot · คุยกับ Astra
       </a>
+      <a href="/astro-timer" className="user-dropdown-item" onClick={() => setOpen(false)}>
+        <IconStar size={16} /> Astro Timer · ฤกษ์งามยามดี
+      </a>
       <a href="/history" className="user-dropdown-item" onClick={() => setOpen(false)}>
         <IconHistory size={16} /> ประวัติรายงาน
       </a>
