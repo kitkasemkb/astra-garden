@@ -6,8 +6,6 @@ import { calculateChart } from "@/lib/astrology";
 import { calculateTransits } from "@/lib/transit";
 import OpenAI from "openai";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 function scoreDay(aspects: Awaited<ReturnType<typeof calculateTransits>>["aspects"]): number {
   return aspects.reduce((sum, a) => {
     const weight = a.influence === "major" ? 2 : 1;
@@ -69,6 +67,7 @@ ${aspectLines}
 
 ใช้ภาษาไทย กระชับ ไม่ใช้ศัพท์เทคนิคโหราศาสตร์มากเกินไป`;
 
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const message = await openai.chat.completions.create({
         model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
         max_tokens: 300,
