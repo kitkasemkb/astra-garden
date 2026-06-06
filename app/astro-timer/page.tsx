@@ -308,7 +308,7 @@ export default function AstroTimerPage() {
                         <div>
                           <span className="rail-label">มุมดาวที่มีผล</span>
                           <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 6 }}>
-                            {detail.aspects.map((a, i) => (
+                            {(detail.aspects ?? []).map((a, i) => (
                               <div key={i} style={{
                                 display: "flex", alignItems: "flex-start", gap: 10,
                                 fontSize: 12, color: "var(--star-dim)",
