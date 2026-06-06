@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useConversation } from "@11labs/react";
 import UserMenu from "@/components/UserMenu";
 import { IconCrystalBall } from "@/components/AstraIcons";
@@ -33,6 +33,11 @@ export default function TarotVoicePage() {
   const [revealedCount, setRevealedCount] = useState(0);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [statusText, setStatusText] = useState("กดปุ่มเพื่อเริ่มต้นการอ่านไพ่");
+  const [readingStarted, setReadingStarted] = useState(false);
+
+  // ติดตาม isSpeaking transitions
+  const prevSpeakingRef = useRef(false);
+  const speakingTurnRef = useRef(0);
 
   const conversation = useConversation({
     onConnect: () => {
@@ -41,33 +46,16 @@ export default function TarotVoicePage() {
     onDisconnect: () => {
       setStatusText("สิ้นสุดการสนทนา");
       setSessionStarted(false);
+      setReadingStarted(false);
+      speakingTurnRef.current = 0;
     },
     onMessage: (msg: unknown) => {
-      // @11labs/react ส่งมาเป็น { message: string, source: 'ai'|'user' }
       const raw = msg as { message?: string; source?: string };
       if (raw?.source !== "ai" || !raw?.message) return;
       const text = raw.message;
-
-      // keyword patterns ที่ AI ใช้เมื่อจะเปิดไพ่แต่ละใบ
-      const CARD_TRIGGERS = [
-        /เปิดไพ่ใบ(?:แรก|ที่?\s*(?:หนึ่ง|1))/,
-        /ไพ่ใบ(?:แรก|ที่?\s*(?:หนึ่ง|1))/,
-        /สถานการณ์ปัจจุบัน/,
-        /สิ่งที่ขัดขวาง/,
-        /จิตใต้สำนึก/,
-        /อดีต(?:ที่ผ่านมา)?/,
-        /ความเป็นไปได้/,
-        /อนาคต(?:ใกล้)?/,
-        /ตัวคุณเอง/,
-        /สิ่งแวดล้อม/,
-        /ความหวัง|ความกลัว/,
-        /ผลลัพธ์(?:สุดท้าย)?/,
-      ];
-
-      // นับว่า AI พูดถึงตำแหน่งไพ่กี่ตำแหน่งในข้อความนี้
-      const triggered = CARD_TRIGGERS.filter(p => p.test(text)).length;
-      if (triggered > 0) {
-        setRevealedCount(prev => Math.min(prev + 1, 10));
+      // ตรวจจับว่า AI เริ่มอ่านไพ่แล้ว
+      if (/เริ่มอ่านไพ่|จะอ่านไพ่|ไพ่ใบที่|ไพ่ใบแรก|สถานการณ์ปัจจุบัน/.test(text)) {
+        setReadingStarted(true);
       }
     },
     onError: (err: unknown) => {
@@ -77,6 +65,21 @@ export default function TarotVoicePage() {
   });
 
   const { status, isSpeaking } = conversation;
+
+  // เปิดไพ่ทุกครั้งที่ AI เริ่มพูดรอบใหม่ หลังจาก reading เริ่มแล้ว
+  useEffect(() => {
+    if (status !== "connected") return;
+    const justStarted = isSpeaking && !prevSpeakingRef.current;
+    prevSpeakingRef.current = isSpeaking;
+
+    if (!justStarted) return;
+    speakingTurnRef.current += 1;
+
+    // turn แรก = ทักทาย, turn ที่ 2 ขึ้นไป = อ่านไพ่
+    if (readingStarted || speakingTurnRef.current > 1) {
+      setRevealedCount(prev => Math.min(prev + 1, 10));
+    }
+  }, [isSpeaking, status, readingStarted]);
 
   useEffect(() => {
     if (status === "connected") {
