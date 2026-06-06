@@ -33,11 +33,19 @@ export default function TarotVoicePage() {
   const [revealedCount, setRevealedCount] = useState(0);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [statusText, setStatusText] = useState("กดปุ่มเพื่อเริ่มต้นการอ่านไพ่");
-  const [readingStarted, setReadingStarted] = useState(false);
-
-  // ติดตาม isSpeaking transitions
-  const prevSpeakingRef = useRef(false);
-  const speakingTurnRef = useRef(0);
+  // map หัวข้อ Celtic Cross → หมายเลขไพ่ (1-based)
+  const POSITION_MAP: { pattern: RegExp; card: number }[] = [
+    { pattern: /สถานการณ์ปัจจุบัน/, card: 1 },
+    { pattern: /สิ่งที่ขัดขวาง/,    card: 2 },
+    { pattern: /จิตใต้สำนึก/,       card: 3 },
+    { pattern: /อดีตที่ผ่านมา/,     card: 4 },
+    { pattern: /ความเป็นไปได้/,     card: 5 },
+    { pattern: /อนาคตใกล้/,         card: 6 },
+    { pattern: /ตัวคุณเอง/,         card: 7 },
+    { pattern: /สิ่งแวดล้อม/,       card: 8 },
+    { pattern: /ความหวังและความกลัว|ความหวัง(?:และ|หรือ)ความกลัว/, card: 9 },
+    { pattern: /ผลลัพธ์สุดท้าย/,   card: 10 },
+  ];
 
   const conversation = useConversation({
     onConnect: () => {
@@ -46,16 +54,17 @@ export default function TarotVoicePage() {
     onDisconnect: () => {
       setStatusText("สิ้นสุดการสนทนา");
       setSessionStarted(false);
-      setReadingStarted(false);
-      speakingTurnRef.current = 0;
     },
     onMessage: (msg: unknown) => {
       const raw = msg as { message?: string; source?: string };
       if (raw?.source !== "ai" || !raw?.message) return;
       const text = raw.message;
-      // ตรวจจับว่า AI เริ่มอ่านไพ่แล้ว
-      if (/เริ่มอ่านไพ่|จะอ่านไพ่|ไพ่ใบที่|ไพ่ใบแรก|สถานการณ์ปัจจุบัน/.test(text)) {
-        setReadingStarted(true);
+
+      for (const { pattern, card } of POSITION_MAP) {
+        if (pattern.test(text)) {
+          setRevealedCount(prev => Math.max(prev, card));
+          break;
+        }
       }
     },
     onError: (err: unknown) => {
@@ -65,21 +74,6 @@ export default function TarotVoicePage() {
   });
 
   const { status, isSpeaking } = conversation;
-
-  // เปิดไพ่ทุกครั้งที่ AI เริ่มพูดรอบใหม่ หลังจาก reading เริ่มแล้ว
-  useEffect(() => {
-    if (status !== "connected") return;
-    const justStarted = isSpeaking && !prevSpeakingRef.current;
-    prevSpeakingRef.current = isSpeaking;
-
-    if (!justStarted) return;
-    speakingTurnRef.current += 1;
-
-    // turn แรก = ทักทาย, turn ที่ 2 ขึ้นไป = อ่านไพ่
-    if (readingStarted || speakingTurnRef.current > 1) {
-      setRevealedCount(prev => Math.min(prev + 1, 10));
-    }
-  }, [isSpeaking, status, readingStarted]);
 
   useEffect(() => {
     if (status === "connected") {
