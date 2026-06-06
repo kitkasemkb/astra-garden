@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { createClient } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
-import { IconHistory, IconStar, IconHearts, IconLogout, IconWork, IconGalaxy } from "@/components/AstraIcons";
+import { IconHistory, IconStar, IconHearts, IconLogout, IconWork, IconGalaxy, IconCrystalBall } from "@/components/AstraIcons";
 import LangToggle from "@/components/LangToggle";
 
 export default function UserMenu() {
@@ -77,6 +77,9 @@ export default function UserMenu() {
       </div>
       <a href="/pricing" className="user-dropdown-item" onClick={() => setOpen(false)}>
         <IconStar size={16} /> {isPro ? "จัดการแผน" : "อัปเกรด Pro"}
+      </a>
+      <a href="/tarot-voice" className="user-dropdown-item" onClick={() => setOpen(false)}>
+        <IconCrystalBall size={16} /> Voice Tarot · คุยกับ Astra
       </a>
       <a href="/history" className="user-dropdown-item" onClick={() => setOpen(false)}>
         <IconHistory size={16} /> ประวัติรายงาน
