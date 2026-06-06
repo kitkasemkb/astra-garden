@@ -219,7 +219,7 @@ export default function AstroTimerPage() {
                       const d = i + 1;
                       const dateStr = `${year}-${String(month + 1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
                       const dayData = days.find(x => x.date === dateStr);
-                      const style = dayData ? COLOR_STYLE[dayData.color] : null;
+                      const style = dayData ? (COLOR_STYLE[dayData.color] ?? COLOR_STYLE.mixed) : null;
                       const isToday = dateStr === todayStr;
                       const isSelected = dateStr === selectedDay;
 
@@ -274,9 +274,9 @@ export default function AstroTimerPage() {
                       </span>
                       {detail && (
                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
-                          <div style={{ width: 10, height: 10, borderRadius: "50%", background: COLOR_STYLE[detail.color].dot }} />
-                          <span style={{ color: COLOR_STYLE[detail.color].dot, fontWeight: 600, fontSize: 15 }}>
-                            {COLOR_STYLE[detail.color].label}
+                          <div style={{ width: 10, height: 10, borderRadius: "50%", background: (COLOR_STYLE[detail.color] ?? COLOR_STYLE.mixed).dot }} />
+                          <span style={{ color: (COLOR_STYLE[detail.color] ?? COLOR_STYLE.mixed).dot, fontWeight: 600, fontSize: 15 }}>
+                            {(COLOR_STYLE[detail.color] ?? COLOR_STYLE.mixed).label}
                           </span>
                         </div>
                       )}
